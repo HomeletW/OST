@@ -1,6 +1,3 @@
-from typing import *
-
-
 default_value = {
 	"date": ("2000", "1", "1"),
 	"date_simplify": ("2000", "1"),
@@ -24,22 +21,39 @@ class Course:
 	
 	def __init__(self,
 	             date: str = "",
-	             course_grade_level: str = "",
-	             course_title: str = "",
-	             course_code: str = "",
-	             percentage_grade: str = "",
+	             level: str = "",
+	             title: str = "",
+	             code: str = "",
+	             percentage: str = "",
 	             credit: str = "",
 	             compulsory: str = "",
 	             note: str = ""
 	             ):
 		self.date = date
-		self.course_grade_level = course_grade_level
-		self.course_title = course_title
-		self.course_code = course_code
-		self.percentage_grade = percentage_grade
+		self.level = level
+		self.title = title
+		self.code = code
+		self.percentage = percentage
 		self.credit = credit
 		self.compulsory = compulsory
 		self.note = note
+	
+	
+	def is_course(self):
+		return self.code != ""
+	
+	
+	def is_compulsory_active(self):
+		return self.is_course() and self.compulsory != ""
+	
+	
+	def calculate_credit(self):
+		if not self.is_course():
+			return 0
+		try:
+			return float(self.credit)
+		except ValueError:
+			return 0
 
 
 class OST_info:
@@ -49,23 +63,23 @@ class OST_info:
 	
 	
 	def __init__(self,
-	             OST_date_of_issue: List[str, str, str] = default_value["date"],
-	             name: List[str, str] = ("", ""),
-	             OEN: str = "",
-	             student_number: str = "",
-	             gender: str = "M",
-	             date_of_birth: List[str, str, str] = default_value["date"],
-	             name_of_district_school_board: str = default_value["name_of_district_school_board"],
-	             district_school_board_number: str = default_value["district_school_board_number"],
-	             name_of_school: str = default_value["name_of_school"],
-	             school_number: str = default_value["school_number"],
-	             date_of_entry: List[str, str, str] = default_value["date"],
+	             OST_date_of_issue=default_value["date"],
+	             name=("", ""),
+	             OEN="",
+	             student_number="",
+	             gender="M",
+	             date_of_birth=default_value["date"],
+	             name_of_district_school_board=default_value["name_of_district_school_board"],
+	             district_school_board_number=default_value["district_school_board_number"],
+	             name_of_school=default_value["name_of_school"],
+	             school_number=default_value["school_number"],
+	             date_of_entry=default_value["date"],
 	             community_involvement_flag=True,
 	             provincial_secondary_school_literacy_requirement_flag=True,
-	             specialized_program: str = "",
-	             diploma_or_certificate: str = "",
-	             diploma_or_certificate_date_of_issue: List[str, str] = default_value["date_simplify"],
-	             authorization: str = default_value["authorization"]
+	             specialized_program="",
+	             diploma_or_certificate="",
+	             diploma_or_certificate_date_of_issue=default_value["date_simplify"],
+	             authorization=default_value["authorization"]
 	             ):
 		self._OST_date_of_issue = [OST_date_of_issue[0], OST_date_of_issue[1], OST_date_of_issue[2]]
 		self._name = [name[0], name[1]]
@@ -85,12 +99,20 @@ class OST_info:
 		self._diploma_or_certificate_date_of_issue = [diploma_or_certificate_date_of_issue[0], diploma_or_certificate_date_of_issue[1]]
 		self._authorization = authorization
 		self._course_list = []
-		self._course_font_size = 10
+		self._course_font_size = 50
 		self._course_spacing = 5
 	
 	
 	def course(self):
 		return self._course_list
+	
+	
+	def count_course_credit(self):
+		return sum([c.calculate_credit() for c in self._course_list])
+	
+	
+	def count_course_compulsory(self):
+		return len([c for c in self._course_list if c.is_compulsory_active()])
 	
 	
 	def course_font_size(self):
@@ -107,7 +129,7 @@ class OST_info:
 	
 	def OST_date_of_issue(self):
 		year, month, day = self._OST_date_of_issue
-		return month + " " + day + " " + year
+		return month + "/" + day + "/" + year
 	
 	
 	def surname(self):
