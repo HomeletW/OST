@@ -4,7 +4,8 @@ default_value = {
 	"name_of_district_school_board": "Toronto Private Inspected",
 	"district_school_board_number": "",
 	"name_of_school": "McCanny Secondary School",
-	"school_number": "668901",
+	"school_number": "668908",
+	"diploma_or_certificate": "Ontario Secondary School Diploma",
 	"authorization": "Dr. Alireza Rafiee",
 }
 
@@ -64,7 +65,8 @@ class OST_info:
 	
 	def __init__(self,
 	             OST_date_of_issue=default_value["date"],
-	             name=("", ""),
+	             surname="",
+	             given_name="",
 	             OEN="",
 	             student_number="",
 	             gender="M",
@@ -77,12 +79,13 @@ class OST_info:
 	             community_involvement_flag=True,
 	             provincial_secondary_school_literacy_requirement_flag=True,
 	             specialized_program="",
-	             diploma_or_certificate="",
+	             diploma_or_certificate=default_value["diploma_or_certificate"],
 	             diploma_or_certificate_date_of_issue=default_value["date_simplify"],
 	             authorization=default_value["authorization"]
 	             ):
 		self._OST_date_of_issue = [OST_date_of_issue[0], OST_date_of_issue[1], OST_date_of_issue[2]]
-		self._name = [name[0], name[1]]
+		# last name(surname, first name(given name)
+		self._name = [surname, given_name]
 		self._OEN = OEN
 		self._student_number = student_number
 		self._gender = gender

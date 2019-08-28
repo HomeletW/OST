@@ -7,9 +7,9 @@ coordinates = {
 	"Size": (3300, 2550),
 	"Offset": (0, 0),
 	# (x, y, width, height)
-	"OST_DateOfIssue": (2309, 91, 508, 89, 40),
-	"Page_1": (2822, 91, 177, 89, 40),
-	"Page_2": (3031, 91, 177, 89, 40),
+	"OST_DateOfIssue": (2309, 91, 508, 89, 55),
+	"Page_1": (2822, 91, 177, 89, 50),
+	"Page_2": (3031, 91, 177, 89, 50),
 	"Surname": (164, 221, 619, 89, 50),
 	"GivenName": (783, 221, 755, 89, 50),
 	"OEN": (1538, 221, 518, 89, 50),
@@ -85,12 +85,12 @@ def draw(info: Main.OST_info, font):
 		          text=str(page_index + 1),
 		          config=coordinates["Page_1"],
 		          font=font,
-		          alignment_flag=flag_right)
+		          alignment_flag=flag_center)
 		draw_text(drawer=drawer,
 		          text=str(total_page),
 		          config=coordinates["Page_2"],
 		          font=font,
-		          alignment_flag=flag_left)
+		          alignment_flag=flag_center)
 		# draw OST Date of Issue
 		draw_text(drawer=drawer,
 		          text=info.OST_date_of_issue(),
@@ -257,27 +257,6 @@ def draw_image(img, image, config, offset=coordinates["Offset"]):
 	img.paste(image, box=(x, y))
 
 
-def plan_courses(courses, font, font_size, spacing):
-	# plan the font
-	course_x, course_y, course_width, course_height = coordinates["Course"]
-	offset_x, offset_y = coordinates["Offset"]
-	course_x += offset_x
-	course_y += offset_y
-	font = ImageFont.truetype(font, size=font_size)
-	# get the height of the font
-	_, test_height = font.getsize(text="ABCD")
-	# minus the spacing from the top
-	availableHeight = course_height - spacing
-	# calculate how much space does the course takes
-	unit_height = test_height + spacing
-	total_height = unit_height * len(courses)
-	# calculate how many page does it takes
-	pages, reminder = int(total_height // availableHeight), total_height % availableHeight
-	if reminder > spacing:
-		pages += 1
-	return pages
-
-
 def draw_courses(courses, font, font_size, spacing):
 	# get the info needed to draw courses
 	_, _, course_width, course_height = coordinates["Course"]
@@ -297,17 +276,20 @@ def draw_courses(courses, font, font_size, spacing):
 	images = [img]
 	
 	
-	def draw_course(drawer, course: Main.Course, y):
+	def get_height(course):
 		# get the maximum height in line
-		height = max(font.getsize(course.date)[1],
-		             font.getsize(course.level)[1],
-		             font.getsize(course.title)[1],
-		             font.getsize(course.code)[1],
-		             font.getsize(course.percentage)[1],
-		             font.getsize(course.credit)[1],
-		             font.getsize(course.compulsory)[1],
-		             font.getsize(course.note)[1],
-		             )
+		return max(font.getsize(course.date)[1],
+		           font.getsize(course.level)[1],
+		           font.getsize(course.title)[1],
+		           font.getsize(course.code)[1],
+		           font.getsize(course.percentage)[1],
+		           font.getsize(course.credit)[1],
+		           font.getsize(course.compulsory)[1],
+		           font.getsize(course.note)[1],
+		           )
+	
+	
+	def draw_course(drawer, course: Main.Course, height, y):
 		# draw date
 		draw_text(drawer=drawer,
 		          text=course.date,
@@ -364,20 +346,22 @@ def draw_courses(courses, font, font_size, spacing):
 		          font=font,
 		          offset=(0, 0),
 		          alignment_flag=flag_center)
-		return height
 	
 	
 	accum_y = spacing
 	for c in courses:
 		# if the height exceed the limit then proceed to next page
-		if accum_y >= course_height:
+		c_height = get_height(c)
+		unit_height = c_height + spacing
+		if accum_y + unit_height > course_height:
 			new_img = Image.new(mode="LA", size=(course_width, course_height))
 			new_img_drawer = ImageDraw.Draw(new_img)
 			images.append(new_img)
 			img = new_img
 			img_drawer = new_img_drawer
 			accum_y = spacing
-		accum_y += draw_course(img_drawer, c, accum_y) + spacing
+		draw_course(img_drawer, c, c_height, accum_y)
+		accum_y += unit_height
 	return images
 
 
@@ -404,14 +388,16 @@ course_3 = Main.Course(
 )
 
 test = Main.OST_info(
-		name=("HONGCHENG", "WEI"),
+		surname="WEI",
+		given_name="HONGCHENG",
 		OEN="294-291-926",
 		student_number="170-700-101",
 		date_of_birth=("2000", "10", "28"),
 		date_of_entry=("2017", "06", "27"),
 )
-test._course_list.append(course_1)
-test._course_list.append(course_2)
+for _ in range(15):
+	test._course_list.append(course_1)
+	test._course_list.append(course_2)
 test._course_list.append(course_3)
 
 tfont = "times-new-roman.ttf"
