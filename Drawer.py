@@ -1,9 +1,12 @@
 from PIL import Image, ImageDraw, ImageFont
 
-import Main
+import Data
+from Launcher import *
 
 
-coordinates = {
+tfont = "times-new-roman.ttf"
+
+default_coordinates = {
 	"Size": (3300, 2550),
 	"Offset": (0, 0),
 	# (x, y, width, height)
@@ -56,182 +59,221 @@ flag_right = 2
 
 # checkMark
 checkMark = Image.open("checkMark.png")
+json_path = "default_coordinates.json"
+
+try:
+	coordinates = from_json(json_path)
+except Exception as exp:
+	print("No default coordinates found, restoring from default..., Error: {}".format(str(exp)))
+	coordinates = default_coordinates
 
 
-def draw(info: Main.OST_info, font):
+def finalize():
+	to_json(json_path, coordinates)
+
+
+def draw(info: Data.OST_info, offset=coordinates["Offset"], font=tfont):
 	images = draw_courses(courses=info.course(), font=font, font_size=info.course_font_size(), spacing=info.course_spacing())
 	total_page = len(images)
+	imgs = []
+	full_name = info.full_name()
 	for page_index in range(total_page):
 		image = images[page_index]
-		img = Image.new(mode="LA", size=coordinates["Size"])
+		img = Image.new(mode="RGBA", size=coordinates["Size"], color=(0, 0, 0, 0))
 		drawer = ImageDraw.Draw(img)
 		# draw the courses
 		course_x, course_y, _, _ = coordinates["Course"]
-		draw_image(img, image, config=(course_x, course_y))
+		draw_image(img, image, config=(course_x, course_y), offset=offset)
 		# draw credit summary
 		draw_text(drawer=drawer,
 		          text=str(info.count_course_credit()),
 		          config=coordinates["SummaryOfCredit"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_center)
 		# draw compulsory summary
 		draw_text(drawer=drawer,
 		          text=str(info.count_course_compulsory()),
 		          config=coordinates["SummaryOfCompulsory"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_center)
 		# draw page number
 		draw_text(drawer=drawer,
 		          text=str(page_index + 1),
 		          config=coordinates["Page_1"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_center)
 		draw_text(drawer=drawer,
 		          text=str(total_page),
 		          config=coordinates["Page_2"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_center)
 		# draw OST Date of Issue
 		draw_text(drawer=drawer,
 		          text=info.OST_date_of_issue(),
 		          config=coordinates["OST_DateOfIssue"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw Surname
 		draw_text(drawer=drawer,
 		          text=info.surname(),
 		          config=coordinates["Surname"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw Given Name
 		draw_text(drawer=drawer,
 		          text=info.given_name(),
 		          config=coordinates["GivenName"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw OEN
 		draw_text(drawer=drawer,
 		          text=info.OEN(),
 		          config=coordinates["OEN"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw student number
 		draw_text(drawer=drawer,
 		          text=info.student_number(),
 		          config=coordinates["StudentNumber"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw gender
 		draw_text(drawer=drawer,
 		          text=info.gender(),
 		          config=coordinates["Gender"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw date of birth year
 		draw_text(drawer=drawer,
 		          text=info.date_of_birth_y(),
 		          config=coordinates["DateOfBirth_Y"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw date of birth month
 		draw_text(drawer=drawer,
 		          text=info.date_of_birth_m(),
 		          config=coordinates["DateOfBirth_M"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw date of birth day
 		draw_text(drawer=drawer,
 		          text=info.date_of_birth_d(),
 		          config=coordinates["DateOfBirth_D"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw name of district school board
 		draw_text(drawer=drawer,
 		          text=info.name_of_district_school_board(),
 		          config=coordinates["NameOfDSB"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw number of district school board
 		draw_text(drawer=drawer,
 		          text=info.district_school_board_number(),
 		          config=coordinates["NumberOfDSB"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw name of school
 		draw_text(drawer=drawer,
 		          text=info.name_of_school(),
 		          config=coordinates["NameOfSchool"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw number of school
 		draw_text(drawer=drawer,
 		          text=info.school_number(),
 		          config=coordinates["NumberOfSchool"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw date of entry year
 		draw_text(drawer=drawer,
 		          text=info.date_of_entry_y(),
 		          config=coordinates["DateOfEntry_Y"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw date of entry month
 		draw_text(drawer=drawer,
 		          text=info.date_of_entry_m(),
 		          config=coordinates["DateOfEntry_M"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw date of entry day
 		draw_text(drawer=drawer,
 		          text=info.date_of_entry_d(),
 		          config=coordinates["DateOfEntry_D"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw specialized program
 		draw_text(drawer=drawer,
 		          text=info.specialized_program(),
 		          config=coordinates["SpecializedProgram"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw diploma or certificate
 		draw_text(drawer=drawer,
 		          text=info.diploma_or_certificate(),
 		          config=coordinates["DiplomaOrCertificate"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw diploma or certificate date year
 		draw_text(drawer=drawer,
 		          text=info.diploma_or_certificate_date_of_issue_y(),
 		          config=coordinates["DiplomaOrCertificate_DateOfIssue_Y"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_center)
 		# draw date of birth month
 		draw_text(drawer=drawer,
 		          text=info.diploma_or_certificate_date_of_issue_m(),
 		          config=coordinates["DiplomaOrCertificate_DateOfIssue_M"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_center)
 		# draw authorization
 		draw_text(drawer=drawer,
 		          text=info.authorization(),
 		          config=coordinates["Authorization"],
 		          font=font,
+		          offset=offset,
 		          alignment_flag=flag_left)
 		# draw community involvement
 		if info.community_involvement():
-			draw_image(img, checkMark, coordinates["CommunityInvolvement_True"])
+			draw_image(img, checkMark, coordinates["CommunityInvolvement_True"], offset=offset)
 		else:
-			draw_image(img, checkMark, coordinates["CommunityInvolvement_False"])
+			draw_image(img, checkMark, coordinates["CommunityInvolvement_False"], offset=offset)
 		# draw provincial secondary school literacy requirement
 		if info.provincial_secondary_school_literacy_requirement():
-			draw_image(img, checkMark, coordinates["ProvincialSecondarySchoolLiteracy_True"])
+			draw_image(img, checkMark, coordinates["ProvincialSecondarySchoolLiteracy_True"], offset=offset)
 		else:
-			draw_image(img, checkMark, coordinates["ProvincialSecondarySchoolLiteracy_False"])
+			draw_image(img, checkMark, coordinates["ProvincialSecondarySchoolLiteracy_False"], offset=offset)
 		# save the image
-		img.save("{} OST{}.png".format(info.full_name(), ("_" + str(page_index + 1)) if total_page > 1 else ""))
+		imgs.append((img, "{}OST{}.png".format(full_name + " " if full_name != "" else "", ("_" + str(page_index + 1)) if total_page > 1 else ""),))
+	return imgs, "{}OST".format(full_name + " " if full_name != "" else "")
 
 
-def draw_text(drawer, text, config, font, offset=coordinates["Offset"], alignment_flag=flag_left):
+def draw_text(drawer, text, config, font, offset, alignment_flag=flag_left):
 	# get the final position of the text and apply the alignment
 	offset_x, offset_y = offset
 	box_x, box_y, box_width, box_height, font_size = config
@@ -250,7 +292,7 @@ def draw_text(drawer, text, config, font, offset=coordinates["Offset"], alignmen
 	drawer.text(xy=(x, y), text=text, font=font, fill="black")
 
 
-def draw_image(img, image, config, offset=coordinates["Offset"]):
+def draw_image(img, image, config, offset):
 	x, y = config
 	x += offset[0]
 	y += offset[1]
@@ -271,7 +313,7 @@ def draw_courses(courses, font, font_size, spacing):
 	font = ImageFont.truetype(font, size=font_size)
 	# draw the courses on a new image
 	# to make sure there are at least one image
-	img = Image.new(mode="LA", size=(course_width, course_height))
+	img = Image.new(mode="RGBA", size=(course_width, course_height), color=(0, 0, 0, 0))
 	img_drawer = ImageDraw.Draw(img)
 	images = [img]
 	
@@ -289,7 +331,7 @@ def draw_courses(courses, font, font_size, spacing):
 		           )
 	
 	
-	def draw_course(drawer, course: Main.Course, height, y):
+	def draw_course(drawer, course: Data.Course, height, y):
 		# draw date
 		draw_text(drawer=drawer,
 		          text=course.date,
@@ -354,7 +396,7 @@ def draw_courses(courses, font, font_size, spacing):
 		c_height = get_height(c)
 		unit_height = c_height + spacing
 		if accum_y + unit_height > course_height:
-			new_img = Image.new(mode="LA", size=(course_width, course_height))
+			new_img = Image.new(mode="RGBA", size=(course_width, course_height), color=(0, 0, 0, 0))
 			new_img_drawer = ImageDraw.Draw(new_img)
 			images.append(new_img)
 			img = new_img
@@ -363,42 +405,3 @@ def draw_courses(courses, font, font_size, spacing):
 		draw_course(img_drawer, c, c_height, accum_y)
 		accum_y += unit_height
 	return images
-
-
-course_1 = Main.Course(
-		date="2017/12",
-		level="12",
-		title="Computer Science",
-		code="ICS4U",
-		percentage="99",
-		credit="1.",
-)
-
-course_2 = Main.Course(
-		date="2017/06",
-		level="10",
-		title="Civics",
-		code="CHV20",
-		percentage="99",
-		credit=".5",
-)
-
-course_3 = Main.Course(
-		title="********LAST OFFICIAL ENTRY********",
-)
-
-test = Main.OST_info(
-		surname="WEI",
-		given_name="HONGCHENG",
-		OEN="294-291-926",
-		student_number="170-700-101",
-		date_of_birth=("2000", "10", "28"),
-		date_of_entry=("2017", "06", "27"),
-)
-for _ in range(15):
-	test._course_list.append(course_1)
-	test._course_list.append(course_2)
-test._course_list.append(course_3)
-
-tfont = "times-new-roman.ttf"
-draw(test, tfont)
