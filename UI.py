@@ -317,7 +317,7 @@ class InfoFrame(tk.Frame):
 	
 	def generate_action(self):
 		ost = self.get_ost()
-		imgs, dir = Drawer.draw(ost)
+		imgs, dir = Drawer.draw(ost, offset=Drawer.coordinates["Offset"])
 		if len(imgs) == 1:
 			img, name = imgs[0]
 			filename = tk.filedialog.asksaveasfilename(parent=self, defaultextension=".png", initialdir="/", initialfile=name, title="Save OST", filetypes=(("PNG files", "*.png"), ("all files", "*.*")))
@@ -697,11 +697,6 @@ class CoursePanel(tk.LabelFrame):
 		self.add_items(width, height)
 	
 	
-	def count_courses(self):
-		total_course = sum([1 for course in self.courses if course.is_course()])
-		self.add.config(text="+ ADD Course{}".format("" if self.index == 0 else " ({})".format(total_course)))
-	
-	
 	def add_course(self):
 		c = CoursePair(self.frame, self.master, (self.avail_width - 5, 24), self.delete_action, self.count_credit, self.count_compulsory, self.count_courses)
 		self.courses.append(c)
@@ -718,6 +713,11 @@ class CoursePanel(tk.LabelFrame):
 		self.count_credit()
 		self.count_compulsory()
 		self.count_courses()
+	
+	
+	def count_courses(self):
+		total_course = sum([1 for course in self.courses if course.is_course()])
+		self.add.config(text="+ ADD Course{}".format("" if self.index == 0 else " ({})".format(total_course)))
 	
 	
 	def count_credit(self):
@@ -923,8 +923,10 @@ class CoursePair(tk.Frame):
 	
 	def add_items(self, width, height, button_action, count_credit, count_compulsory, count_course):
 		def wrapper():
-			count_course()
 			self.smart_fill()
+			count_course()
+			count_compulsory()
+			count_credit()
 		
 		
 		unit_height = height
