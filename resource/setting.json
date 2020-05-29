@@ -1,0 +1,8 @@
+{
+    "draw_ost_template": true,
+    "smart_fill": true,
+    "train": true,
+    "json_dir": "/home/homelet/Desktop",
+    "img_dir": "/home/homelet/Desktop",
+    "last_session": "/home/homelet/Desktop/de2.json"
+}
