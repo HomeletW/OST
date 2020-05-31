@@ -1,42 +1,4 @@
-import json
-import os
-from datetime import date
-
-from Launcher import to_json
-
-today = None
-
-
-def update_today():
-    global today
-    day = date.today()
-    year, month, day = day.year, day.month, day.day
-    today = str(year), str(month), str(day)
-
-
-update_today()
-
-default_ost_info = {"OST_date_of_issue": today,
-                    "name": ["", ""],
-                    "OEN": "",
-                    "student_number": "",
-                    "gender": "",
-                    "date_of_birth": ["", "", ""],
-                    "name_of_district_school_board": "Toronto Private Inspected",
-                    "district_school_board_number": "",
-                    "name_of_school": "McCanny Secondary School",
-                    "school_number": "668908",
-                    "date_of_entry": ["", "", ""],
-                    "community_involvement_flag": True,
-                    "provincial_secondary_school_literacy_requirement_flag": True,
-                    "specialized_program": "",
-                    "diploma_or_certificate": "Ontario Secondary School Diploma",
-                    "diploma_or_certificate_date_of_issue": ["", ""],
-                    "authorization": "Dr. Alireza Rafiee",
-                    "course_list": [],
-                    "course_font_size": 50,
-                    "course_spacing": 5,
-                    }
+from OST_helper.parameter import *
 
 
 class Course:
@@ -94,30 +56,30 @@ class OST_info:
     """
 
     def __init__(self,
-                 OST_date_of_issue=default_ost_info["OST_date_of_issue"],
-                 name=default_ost_info["name"],
-                 OEN=default_ost_info["OEN"],
-                 student_number=default_ost_info["student_number"],
-                 gender=default_ost_info["gender"],
-                 date_of_birth=default_ost_info["date_of_birth"],
-                 name_of_district_school_board=default_ost_info[
+                 OST_date_of_issue=default_ost["OST_date_of_issue"],
+                 name=default_ost["name"],
+                 OEN=default_ost["OEN"],
+                 student_number=default_ost["student_number"],
+                 gender=default_ost["gender"],
+                 date_of_birth=default_ost["date_of_birth"],
+                 name_of_district_school_board=default_ost[
                      "name_of_district_school_board"],
-                 district_school_board_number=default_ost_info[
+                 district_school_board_number=default_ost[
                      "district_school_board_number"],
-                 name_of_school=default_ost_info["name_of_school"],
-                 school_number=default_ost_info["school_number"],
-                 date_of_entry=default_ost_info["date_of_entry"],
-                 community_involvement_flag=default_ost_info[
+                 name_of_school=default_ost["name_of_school"],
+                 school_number=default_ost["school_number"],
+                 date_of_entry=default_ost["date_of_entry"],
+                 community_involvement_flag=default_ost[
                      "community_involvement_flag"],
                  provincial_secondary_school_literacy_requirement_flag=
-                 default_ost_info[
+                 default_ost[
                      "provincial_secondary_school_literacy_requirement_flag"],
-                 specialized_program=default_ost_info["specialized_program"],
-                 diploma_or_certificate=default_ost_info[
+                 specialized_program=default_ost["specialized_program"],
+                 diploma_or_certificate=default_ost[
                      "diploma_or_certificate"],
-                 diploma_or_certificate_date_of_issue=default_ost_info[
+                 diploma_or_certificate_date_of_issue=default_ost[
                      "diploma_or_certificate_date_of_issue"],
-                 authorization=default_ost_info["authorization"]
+                 authorization=default_ost["authorization"]
                  ):
         self._OST_date_of_issue = [OST_date_of_issue[0], OST_date_of_issue[1],
                                    OST_date_of_issue[2]]
@@ -245,6 +207,16 @@ class OST_info:
     def set_spacing(self, spacing):
         self._course_spacing = spacing
 
+    def get_file_name(self, sub="", file_type=".pdf"):
+        full_name = self.full_name()
+        oen = self.OEN()
+        return "{}_{}OST{}{}".format(
+            full_name if full_name else "UNNAMED",
+            oen + "_" if oen else "",
+            "_" + sub if sub else "",
+            file_type if file_type.startswith(".") else "." + file_type
+        )
+
     def to_data(self):
         data = {"OST_date_of_issue": self._OST_date_of_issue,
                 "name": self._name,
@@ -332,21 +304,3 @@ class OST_info:
         ost._course_font_size = course_font_size
         ost._course_spacing = course_spacing
         return ost
-
-
-DEFAULT_OST_PATH = "./resource/default_ost.json"
-
-try:
-    default_ost = OST_info.from_json(DEFAULT_OST_PATH)
-    default_ost.update_date_of_issue(today)
-    print("Loaded default ost!")
-except Exception as exp:
-    print(
-        "No default OST info found, restoring from default..., Error: {}".format(
-            str(exp)))
-    default_ost = OST_info.from_data(default_ost_info)
-
-
-def finalize():
-    default_ost.to_json(DEFAULT_OST_PATH)
-    print("OST saved!")
