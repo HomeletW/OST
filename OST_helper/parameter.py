@@ -3,8 +3,9 @@ import json
 import logging
 import os
 import platform
+import subprocess
 from datetime import date
-from os.path import expanduser, isdir, isfile, join
+from os.path import exists, expanduser, isdir, isfile, join
 
 from PIL import Image
 
@@ -37,6 +38,16 @@ PRODUCTION_FILE_EXISTS = 1
 PRODUCTION_FILE_NOT_RECOGNIZED = 2
 
 
+def update_today():
+    global today
+    day = date.today()
+    year, month, day = day.year, day.month, day.day
+    today = str(year), str(month), str(day)
+
+
+update_today()
+
+
 def from_json(path):
     with open(path, "r") as js:
         data = json.load(js)
@@ -46,13 +57,6 @@ def from_json(path):
 def to_json(path, data):
     with open(path, "w+") as js:
         json.dump(data, js, indent=4)
-
-
-def update_today():
-    global today
-    day = date.today()
-    year, month, day = day.year, day.month, day.day
-    today = str(year), str(month), str(day)
 
 
 def get_desktop_directory():
@@ -66,6 +70,20 @@ def get_desktop_directory():
         return home_dir
     else:
         return "/"
+
+
+def open_path(abs_path):
+    if not exists(abs_path):
+        raise ValueError("Path Not Exist!")
+    if DEVICE_OS in ["Darwin"]:
+        subprocess.Popen(["open", "-R", "{}".format(abs_path)])
+    elif DEVICE_OS in ["Windows"]:
+        subprocess.Popen('cmd /c start "START" "{}"'.format(abs_path))
+    elif DEVICE_OS in ["Linux"]:
+        subprocess.Popen(["nautilus", "--browser", "{}".format(abs_path)])
+    else:
+        raise Exception(
+            "Not Supported Operating System [{}]!".format(DEVICE_OS))
 
 
 DEFAULT_DIR = get_desktop_directory()
@@ -108,46 +126,46 @@ default_coordinates = {
     "Size": (3300, 2532),
     "Offset": (0, 0),
     # (x, y, width, height)
-    "OST_DateOfIssue": (2309, 91, 508, 89, 55),
-    "Page_1": (2822, 91, 177, 89, 50),
-    "Page_2": (3031, 91, 177, 89, 50),
-    "Surname": (164, 221, 619, 89, 50),
-    "GivenName": (783, 221, 755, 89, 50),
-    "OEN": (1538, 221, 518, 89, 50),
-    "StudentNumber": (2056, 221, 524, 89, 50),
-    "Gender": (2580, 221, 134, 89, 50),
-    "DateOfBirth_Y": (2714, 248, 195, 62, 40),
-    "DateOfBirth_M": (2909, 248, 196, 62, 40),
-    "DateOfBirth_D": (3105, 248, 139, 62, 40),
-    "NameOfDSB": (148, 352, 1009, 93, 50),
-    "NumberOfDSB": (1157, 352, 381, 93, 50),
-    "NameOfSchool": (1538, 352, 789, 93, 50),
-    "NumberOfSchool": (2327, 352, 387, 93, 50),
-    "DateOfEntry_Y": (2714, 378, 195, 67, 40),
-    "DateOfEntry_M": (2909, 378, 196, 67, 40),
-    "DateOfEntry_D": (3105, 378, 139, 67, 40),
+    "OST_DateOfIssue": (2301, 73, 532, 85, 55),
+    "Page_1": (2826, 73, 183, 85, 50),
+    "Page_2": (3046, 73, 183, 85, 50),
+    "Surname": (85, 204, 645, 94, 50),
+    "GivenName": (730, 204, 772, 94, 50),
+    "OEN": (1502, 204, 537, 94, 50),
+    "StudentNumber": (2039, 204, 538, 94, 50),
+    "Gender": (2577, 204, 136, 94, 50),
+    "DateOfBirth_Y": (2713, 228, 202, 70, 40),
+    "DateOfBirth_M": (2915, 228, 202, 70, 40),
+    "DateOfBirth_D": (3117, 228, 147, 70, 40),
+    "NameOfDSB": (85, 336, 1023, 100, 50),
+    "NumberOfDSB": (1108, 338, 397, 100, 50),
+    "NameOfSchool": (1505, 338, 807, 100, 50),
+    "NumberOfSchool": (2311, 338, 402, 100, 50),
+    "DateOfEntry_Y": (2713, 368, 202, 70, 40),
+    "DateOfEntry_M": (2915, 368, 202, 70, 40),
+    "DateOfEntry_D": (3117, 368, 147, 70, 40),
     # (x, y, width, height)
-    "Course": (111, 572, 3134, 1363),
+    "Course": (35, 564, 3230, 1419),
     # (x_offset, width)
-    "Course_date_offset": (0, 261),
-    "Course_level_offset": (264, 177),
-    "Course_title_offset": (444, 1589),
-    "Course_code_offset": (2036, 236),
-    "Course_percentage_offset": (2275, 171),
-    "Course_credit_offset": (2452, 180),
-    "Course_compulsory_offset": (2635, 201),
-    "Course_note_offset": (2842, 292),
-    "SummaryOfCredit": (2567, 1941, 176, 66, 55),
-    "SummaryOfCompulsory": (2746, 1941, 201, 66, 55),
-    "CommunityInvolvement_True": (148, 2068),
-    "CommunityInvolvement_False": (449, 2068),
-    "ProvincialSecondarySchoolLiteracy_True": (680, 2068),
-    "ProvincialSecondarySchoolLiteracy_False": (1215, 2068),
-    "SpecializedProgram": (1494, 2049, 1750, 89, 40),
-    "DiplomaOrCertificate": (129, 2187, 1578, 64, 40),
-    "DiplomaOrCertificate_DateOfIssue_Y": (1734, 2213, 168, 52, 40),
-    "DiplomaOrCertificate_DateOfIssue_M": (1911, 2213, 168, 52, 40),
-    "Authorization": (2106, 2180, 1092, 85, 40),
+    "Course_date_offset": (35 - 35, 268),
+    "Course_level_offset": (306 - 35, 183),
+    "Course_title_offset": (491 - 35, 1637),
+    "Course_code_offset": (2131 - 35, 244),
+    "Course_percentage_offset": (2378 - 35, 175),
+    "Course_credit_offset": (2563 - 35, 183),
+    "Course_compulsory_offset": (2748 - 35, 207),
+    "Course_note_offset": (2965 - 35, 299),
+    "SummaryOfCredit": (2562, 1992, 184, 69, 55),
+    "SummaryOfCompulsory": (2748, 1992, 207, 69, 55),
+    "CommunityInvolvement_True": (75, 2125),
+    "CommunityInvolvement_False": (385, 2125),
+    "ProvincialSecondarySchoolLiteracy_True": (623, 2125),
+    "ProvincialSecondarySchoolLiteracy_False": (1173, 2125),
+    "SpecializedProgram": (1436, 2104, 1828, 96, 40),
+    "DiplomaOrCertificate": (77, 2240, 1622, 90, 40),
+    "DiplomaOrCertificate_DateOfIssue_Y": (1702, 2273, 180, 57, 40),
+    "DiplomaOrCertificate_DateOfIssue_M": (1885, 2273, 180, 57, 40),
+    "Authorization": (2070, 2240, 1148, 90, 40),
 }
 
 COMMON_COURSE_CODE_LIBRARY = None
@@ -172,8 +190,6 @@ def initialize():
     global DEFAULT_OST_INFO
     global COORDINATES
     logger = logging.getLogger()
-    # update today
-    update_today()
     # initialize CCCL
     try:
         COMMON_COURSE_CODE_LIBRARY = from_json(CCCL_PATH)

@@ -1,10 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
-from os.path import dirname, exists
-from tempfile import TemporaryDirectory
+from os.path import dirname
 from tkinter import filedialog
-
-import fpdf
 
 from Launcher import PATCH
 from OST_helper.UI.dialogs import AdjustmentWindow, EMPTY_TRACKER, \
@@ -13,7 +10,6 @@ from OST_helper.UI.fields import *
 from OST_helper.UI.tk_objects import TopDownSizeConfig
 from OST_helper.data_handler import Data, Drawer
 from OST_helper.data_handler.Data import OST_info
-from OST_helper.data_handler.Drawer import get_total_size_in_mm
 from OST_helper.parameter import *
 
 
@@ -30,7 +26,7 @@ class Application:
         self.title = title
         self.update_title()
         self.root.resizable(0, 0)
-        # self.root.iconbitmap(mccanny_logo)
+        self.root.iconbitmap(MCCANNY_LOGO)
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.infoFrame = None
 
@@ -164,12 +160,12 @@ class InfoFrame(tk.Frame):
                 return PRODUCTION_FILE_EXISTS
             self._generate_action(EMPTY_TRACKER, ost, pdf_path,
                                   draw_ost_template=draw_ost_template,
-                                  print_=False)
+                                  open_file=False)
             return PRODUCTION_SUCCESS
         except Exception:
             return PRODUCTION_FILE_NOT_RECOGNIZED
 
-    def generate_action(self, print_=True):
+    def generate_action(self, open_file=True):
         ost = self.get_ost()
         pdf_path = tk.filedialog.asksaveasfilename(
             parent=self.tk_frame,
@@ -185,11 +181,12 @@ class InfoFrame(tk.Frame):
         if not pdf_path:
             return
         tmd = ThreadMonitorDialog(self, "Generate OST",
+                                  self,
                                   self._generate_action,
                                   ost=ost,
                                   pdf_path=pdf_path,
                                   draw_ost_template=None,
-                                  print_=print_)
+                                  open_file=open_file)
         tmd.start()
 
     def _generate_action(self,
@@ -197,58 +194,53 @@ class InfoFrame(tk.Frame):
                          ost,
                          pdf_path,
                          draw_ost_template=None,
-                         print_=True) -> bool:
+                         open_file=True) -> bool:
         # ask the directory for pdf file save
-        progress_dialog.init(10 if print_ else 9)
-        progress_dialog.tick("Drawing Images...")
+        progress_dialog.init(4)
+        progress_dialog.tick("➜ Drawing OST")
         if draw_ost_template is None:
             draw_ost_template = SETTING["draw_ost_template"]
         images, _ = Drawer.draw(ost, draw_ost_template,
                                 offset=COORDINATES["Offset"])
-        progress_dialog.tick("Generating to : {}...".format(pdf_path))
+        progress_dialog.tick("➜ Creating PDF file")
         pdf_dir = dirname(pdf_path)
         SETTING["img_dir"] = pdf_dir
         # first save the file in to a folder in the destination location
-        progress_dialog.tick("Creating temp folder...")
-        with TemporaryDirectory(dir=pdf_dir) as temp_dir:
-            progress_dialog.tick("Writing images...")
-            # first write images to temp location
-            img_dirs = []
-            for img, name in images:
-                image_path = join(temp_dir, name)
-                try:
-                    img.save(image_path, "png")
-                except Exception as e:
-                    progress_dialog.log(
-                        "Error on generate!\nError: {}".format(str(e)))
-                    progress_dialog.end(error=True)
-                    return False
-                img_dirs.append(image_path)
-            progress_dialog.tick("Creating PDF files by images...")
-            # now we get all the images we can output the pdf.
-            mm_width, mm_height = get_total_size_in_mm()
-            pdf = fpdf.FPDF(orientation="Landscape", unit="in",
-                            format=(mm_height, mm_width))
-            pdf.set_auto_page_break(False)
-            for img_dir in img_dirs:
-                pdf.add_page(orientation="Landscape")
-                # x=0, y=0,
-                pdf.image(img_dir, w=mm_width, h=mm_height, type="png")
-            pdf.close()
-            pdf.output(name=pdf_path)
-            progress_dialog.tick("PDF file saved...")
-        # now we move on to print
-        if print_:
-            progress_dialog.tick("Starting Print Service...")
-            self.print_file(pdf_dir)
-        progress_dialog.tick("Finished!")
-        self.status_bar.set("OST generated at {}!".format(pdf_path))
+        # first write images to temp location
+        imgs = [img.convert("RGB") for img, name in images]
+        first_imgs = imgs[0]
+        other_imgs = imgs[1:]
+        try:
+            first_imgs.save(
+                pdf_path,
+                format="pdf",
+                save_all=True,
+                append_images=other_imgs,
+                author="McCanny Secondary School",
+                subject="OST",
+            )
+        except Exception as e:
+            progress_dialog.log("✗ Error on generate! {}".format(str(e)))
+            progress_dialog.end(error=True)
+            return False
+        progress_dialog.tick("➜ PDF saved!")
+        progress_dialog.tick("➜ Finished!")
         progress_dialog.end()
+        progress_dialog.log("✔ PDF Saved to : {}".format(pdf_path))
+        self.status_bar.set("PDF saved to : {}!".format(pdf_path))
+        # now we move on to print
+        if open_file:
+            self.open_file(pdf_path, progress_dialog)
         return True
 
-    def print_file(self, file_name):
-        # TODO print the pdf file
-        pass
+    @staticmethod
+    def open_file(pdf_path, progress_dialog):
+        print(pdf_path)
+        try:
+            open_path(pdf_path)
+            progress_dialog.log("✔ File opened!")
+        except Exception as e:
+            progress_dialog.log("✗ Fail to open file! {}".format(str(e)))
 
     def reset_action(self, ask=True):
         # pop up here
@@ -294,7 +286,9 @@ class InfoFrame(tk.Frame):
         self.status_bar.set("Draft saved on {}!".format(self.save_path))
 
     def save_as_action(self, ost=None):
-        file_name = "" if ost is None else ost.get_file_name()
+        if ost is None:
+            ost = self.get_ost()
+        file_name = ost.get_file_name(file_type=".json")
         path = tk.filedialog.asksaveasfilename(
             parent=self,
             initialdir=SETTING["json_dir"],

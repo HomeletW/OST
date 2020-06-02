@@ -5,7 +5,10 @@ import tkinter.filedialog
 import tkinter.messagebox
 from os import listdir
 from os.path import basename, split
+from tkinter import font
 from tkinter.ttk import Progressbar
+
+import win32print
 
 from PIL import ImageTk
 
@@ -25,6 +28,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.canvas_size = c_width, c_height
         super().__init__(master=master, width=c_width, height=c_height + 250)
         self.wm_title("Adjustment")
+        self.wm_iconbitmap(MCCANNY_LOGO)
         self.info_frame = info_frame
         self.resizable(0, 0)
         self.ost_sample = OST_SAMPLE_IMAGE
@@ -204,13 +208,15 @@ class Tracker:
 
 
 class ThreadMonitorDialog(tk.Toplevel, Tracker):
-    def __init__(self, master, title, func, **kwargs):
+    def __init__(self, master, title, info_frame, func, **kwargs):
         width, height = 714, 400
         self.size_config = TopDownSizeConfig(width=width, height=height)
         super().__init__(master=master, width=width, height=height)
         self.transient(master)
         self.title(title)
+        self.wm_iconbitmap(MCCANNY_LOGO)
         self.resizable(0, 0)
+        self.info_frame = info_frame
         self.thread_finished = False
         kwargs["progress_dialog"] = self
         self.thread = threading.Thread(target=func, name=title, kwargs=kwargs)
@@ -228,6 +234,14 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
         self.protocol("WM_DELETE_WINDOW", self.exit)
 
     def start(self):
+        p_x = self.info_frame.tk_frame.winfo_rootx()
+        p_y = self.info_frame.tk_frame.winfo_rooty()
+        p_height = self.info_frame.tk_frame.winfo_height()
+        p_width = self.info_frame.tk_frame.winfo_width()
+        p_center_x, p_center_y = p_x + p_width // 2, p_y + p_height // 2
+        width, height = self.size_config.size()
+        x, y = p_center_x - width // 2, p_center_y - height // 2
+        self.wm_geometry("+{}+{}".format(x, y))
         if not self.initial_focus:
             self.initial_focus = self
         self.initial_focus.focus_set()
@@ -256,8 +270,9 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
         self.progress["value"] = self.progress["maximum"]
         time_elapsed = time.time() - self._start_time if self._start_time is not None else "Unknown"
         self.log(
-            "Time Elapsed : {}".format(
-                self._format_time(time_elapsed)).center(80, "="))
+            "Time Elapsed {}".format(self._format_time(time_elapsed))
+                .center(80, "=")
+        )
         if error:
             self.ok.config(bg=self.red, fg="white",
                            text="Process Failed, Press to Exit!")
@@ -283,7 +298,8 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
         ], internal=False)
         self.detail = tk.Text(
             master=self, state=tk.DISABLED, relief=tk.SUNKEN, borderwidth=2,
-            width=80, font=("arial", 12)
+            width=80,
+            font=font.Font(size=12)
         )
         self.detail.debug(True)
         self.progress = Progressbar(
@@ -332,6 +348,7 @@ class ProductionDialog(tk.Toplevel):
         self.transient(master)
         self.info_frame = info_frame
         self.title("Production Tool")
+        self.wm_iconbitmap(MCCANNY_LOGO)
         self.resizable(0, 0)
         self.main_frame = None
         self.description_label = None
@@ -359,6 +376,14 @@ class ProductionDialog(tk.Toplevel):
         self.destroy()
 
     def start(self):
+        p_x = self.info_frame.tk_frame.winfo_rootx()
+        p_y = self.info_frame.tk_frame.winfo_rooty()
+        p_height = self.info_frame.tk_frame.winfo_height()
+        p_width = self.info_frame.tk_frame.winfo_width()
+        p_center_x, p_center_y = p_x + p_width // 2, p_y + p_height // 2
+        width, height = self.size_config.size()
+        x, y = p_center_x - width // 2, p_center_y - height // 2
+        self.wm_geometry("+{}+{}".format(x, y))
         if not self.initial_focus:
             self.initial_focus = self
         self.initial_focus.focus_set()
@@ -381,7 +406,7 @@ class ProductionDialog(tk.Toplevel):
             )
             return
         tmd = ThreadMonitorDialog(
-            self, "Production", self._production,
+            self, "Production", self.info_frame, self._production,
             json_dir=json_dir, output_dir=output_dir,
             draw_template=draw_template,
             overwrite_output=overwrite_output,
@@ -394,12 +419,9 @@ class ProductionDialog(tk.Toplevel):
         progress_dialog.init(len(jsons))
         for j in jsons:
             json_path = join(json_dir, j)
-            progress_dialog.log(
-                "➜ {} ".format(j)
-            )
             if not isfile(json_path):
                 progress_dialog.tick(
-                    "✗, Not a file.", prefix=""
+                    "✗ {} : Not a file.".format(j)
                 )
             else:
                 ret = self.info_frame.production(
@@ -410,18 +432,26 @@ class ProductionDialog(tk.Toplevel):
                 )
                 if ret in [PRODUCTION_FILE_NOT_RECOGNIZED]:
                     progress_dialog.tick(
-                        "✗, Can't Recognize, Not a project file", prefix=""
+                        "✗ {} : Can't Recognize, Not a project file".format(j)
                     )
                 elif ret in [PRODUCTION_FILE_EXISTS]:
                     progress_dialog.tick(
-                        "✗, Can't save PDF (file exists in output location)",
-                        prefix=""
+                        "✗ {} : Can't save PDF (file exists in output location)"
+                            .format(j)
                     )
                 else:
                     progress_dialog.tick(
-                        "✔️, Successful!", prefix=""
+                        "✔ {} : Successful!".format(j)
                     )
+        progress_dialog.tick("➜ Finished!")
         progress_dialog.end()
+        # try to open folder
+        try:
+            open_path(output_dir)
+            progress_dialog.log("✔ Output Directory opened!")
+        except Exception as e:
+            progress_dialog.log(
+                "✗ Fail to open Output Directory! {}".format(str(e)))
 
     def ask_dir(self, init_dir, title) -> str:
         return tk.filedialog.askdirectory(

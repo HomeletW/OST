@@ -59,18 +59,16 @@ class CoursePanel(tk.Frame):
         c.grid(row=self.index, column=0, ipadx=0, ipady=2)
         if sync:
             self.set_focus(self.index - 1, "code")
-        c.bind_all("<MouseWheel>", self.mouse_scroll, add=True)
+        # c.bind_all("<MouseWheel>", self.mouse_scroll, add=True)
         return c
 
     def sync_canvas_loc(self, index):
         if self.index < self.visible_on_screen:
+            self.after(10, self.canvas.yview_moveto, 0)
             return
         screen_index = index // self.visible_on_screen
         total_screens = math.ceil(self.index / self.visible_on_screen)
         self.after(10, self.canvas.yview_moveto, screen_index / total_screens)
-
-    def mouse_scroll(self, event):
-        self.canvas.yview_scroll(-1 * (event.delta / 120), "units")
 
     def left_action(self, event):
         widget = event.widget
@@ -271,11 +269,11 @@ class CoursePanel(tk.Frame):
             [[1, 1]] * self.visible_on_screen
         )[0][0]
         self.bind("<FocusOut>", self.train)
-        self.canvas.bind_all("<MouseWheel>", self.mouse_scroll)
+        # self.canvas.bind_all("<MouseWheel>", self.mouse_scroll)
 
     def set(self, courses, sort=True):
         for c in self.courses:
-            c.grid_remove()
+            c.grid_forget()
         self.courses.clear()
         self.index = 0
         for data in courses:
@@ -283,6 +281,7 @@ class CoursePanel(tk.Frame):
             c.set(data)
         if sort:
             self.sort_course()
+        self.sync_canvas_loc(0)
         self.count_courses()
         self.count_compulsory()
         self.count_credit()

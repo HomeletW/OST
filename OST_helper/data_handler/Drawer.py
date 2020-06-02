@@ -12,12 +12,6 @@ flag_right = 2
 checkMark = Image.open("./resource/checkMark.png")
 
 
-def get_total_size_in_mm():
-    width, height = COORDINATES["Size"]
-    mm_width, mm_height = round(width * 0.264583), round(height * 0.264583)
-    return mm_width, mm_height
-
-
 def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
          font=TFONT):
     course_images = draw_courses(courses=info.course(), font=font,
@@ -25,7 +19,6 @@ def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
                                  spacing=info.course_spacing())
     total_page = len(course_images)
     images = []
-    full_name = info.full_name()
     for page_index in range(total_page):
         image = course_images[page_index]
         img = Image.new(mode="RGBA", size=COORDINATES["Size"],
@@ -177,11 +170,12 @@ def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
                   offset=offset,
                   alignment_flag=flag_left)
         # draw specialized program
+        specialized_program_offset = offset[0] + 10, offset[1]
         draw_text(drawer=drawer,
                   text=info.specialized_program(),
                   config=COORDINATES["SpecializedProgram"],
                   font=font,
-                  offset=offset,
+                  offset=specialized_program_offset,
                   alignment_flag=flag_left)
         # draw diploma or certificate
         draw_text(drawer=drawer,
@@ -205,11 +199,12 @@ def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
                   offset=offset,
                   alignment_flag=flag_center)
         # draw authorization
+        authorization_offset = offset[0] + 10, offset[1]
         draw_text(drawer=drawer,
                   text=info.authorization(),
                   config=COORDINATES["Authorization"],
                   font=font,
-                  offset=offset,
+                  offset=authorization_offset,
                   alignment_flag=flag_left)
         # draw community involvement
         if info.community_involvement():
@@ -314,7 +309,7 @@ def draw_courses(courses, font, font_size, spacing):
                   text=course.title,
                   config=(title_x, y, title_width, height, 0),
                   font=font,
-                  offset=(0, 0),
+                  offset=(10, 0),
                   alignment_flag=flag_left)
         # draw code
         draw_text(drawer=drawer,
@@ -362,7 +357,7 @@ def draw_courses(courses, font, font_size, spacing):
                                 color=(0, 0, 0, 0))
             new_img_drawer = ImageDraw.Draw(new_img)
             images.append(new_img)
-            img = new_img
+            # img = new_img
             img_drawer = new_img_drawer
             accum_y = spacing
         draw_course(img_drawer, c, c_height, accum_y)
