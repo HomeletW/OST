@@ -8,8 +8,6 @@ from os.path import basename, split
 from tkinter import font
 from tkinter.ttk import Progressbar
 
-import win32print
-
 from PIL import ImageTk
 
 from OST_helper.UI.tk_objects import DEFAULT_SPACING, ScalePair, \
@@ -501,7 +499,7 @@ class ProductionDialog(tk.Toplevel):
         self.main_frame = tk.Frame(self)
         self.main_frame.place(x=0, y=0, width=width, height=height)
         self.size_config.divide([
-            [3, 1],
+            [4, 1],
             [1, 1, 2],
             [1, 1, 2],
             [1, 1, 1],
@@ -509,13 +507,15 @@ class ProductionDialog(tk.Toplevel):
         ], internal=False)
         self.description_label = tk.Label(
             self.main_frame,
-            text="Welcome to Production Tool!\n"
+            text="Welcome to the Production Tool!\n"
                  "Choose your Production Directory and Output Location to start production.\n"
                  "\n"
-                 "Every file in Production Directory will be processed (if possible), "
-                 "and saved with the default file name to the Output Location. "
-                 "If the file name already exist in Output Location, "
-                 "it won't be overwritten unless <Overwrite when necessary> is checked.",
+                 "Every file in the Production Directory will be processed to "
+                 "generate an OST report (if possible) and saved to the "
+                 "Output Location with the default file name. "
+                 "If the file name already exists in Output Location, "
+                 "it won't be overwritten unless <Overwrite when necessary> "
+                 "is checked.",
             font=("arial", 12),
             justify=tk.LEFT,
             anchor=tk.NW,

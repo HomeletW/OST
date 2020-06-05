@@ -21,7 +21,7 @@ SETTING_PATH = "./resource/setting.json"
 MCCANNY_LOGO = "./resource/mccanny_logo.ico"
 OST_SAMPLE = "./resource/ost_sample.png"
 DEFAULT_OST_PATH = "./resource/default_ost.json"
-TFONT = "./resource/times-new-roman.ttf"
+TFONT = "./resource/font.ttf"
 DEFAULT_COORDINATES_PATH = "./resource/default_coordinates.json"
 
 # os

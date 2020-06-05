@@ -29,6 +29,7 @@ class Application:
         self.root.iconbitmap(MCCANNY_LOGO)
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.infoFrame = None
+        self.add_info_frame()
 
     def add_info_frame(self):
         divided = self.size_config.divide([
@@ -42,7 +43,6 @@ class Application:
         self.root.destroy()
 
     def run(self):
-        self.add_info_frame()
         self.infoFrame.init_session(default=DEFAULT_OST_INFO)
         self.root.mainloop()
 
@@ -235,7 +235,6 @@ class InfoFrame(tk.Frame):
 
     @staticmethod
     def open_file(pdf_path, progress_dialog):
-        print(pdf_path)
         try:
             open_path(pdf_path)
             progress_dialog.log("✔ File opened!")
