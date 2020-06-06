@@ -3,6 +3,8 @@ Made for McCanny Secondary School, Dev by HongCheng Wei ([homeletwei@gmail.com](
 
 ## Install OST Helper
 
+Currently, OST Helper only supports Windows Platform.
+
 To install OST Helper, download the latest installer from [here](https://github.com/Homelet/OST/blob/master/Release/V%201.1/OST%20Helper_v1.1_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
 
 You can also create [a desktop shortcut](#how-to-create-desktop-shortcut) and [a start menu shortcut](#how-to-create-start-menu-shortcut).
