@@ -113,7 +113,7 @@ First put all OST file you want to process in a Directory (this will be refered 
 Defaultly, if the PDF already exsist in the Output Location, it won't be overwritten. To disable this behavior check `Overwrite Output files when necessary`.
 
 ## Install OST Helper
-To install OST Helper, download the latest installer from [hear](Release/V%201.1/OST%20Helper_v1.1_installer.exe), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
+To install OST Helper, download the latest installer from [hear](https://github.com/Homelet/OST/blob/master/Release/V%201.1/OST%20Helper_v1.1_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
 
 You can also create [a desktop shortcut](#how-to-create-desktop-shortcut) and [a start menu shortcut](#how-to-create-start-menu-shortcut).
 
