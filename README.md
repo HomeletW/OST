@@ -1,6 +1,14 @@
 # OST Helper
 Made for McCanny Secondary School, Dev by HongCheng Wei ([homeletwei@gmail.com](mailto::homeletwei@gmail.com)).
 
+## Install OST Helper
+
+To install OST Helper, download the latest installer from [here](https://github.com/Homelet/OST/blob/master/Release/V%201.1/OST%20Helper_v1.1_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
+
+You can also create [a desktop shortcut](#how-to-create-desktop-shortcut) and [a start menu shortcut](#how-to-create-start-menu-shortcut).
+
+See the previous Release of OST Helper, check [here](Release).
+
 ## Overview
 OST Helper is a program that helps to create and modify the Ontario Student Transcript (OST) easily. 
 
@@ -111,14 +119,6 @@ First, put all OST file you want to process in a Directory (referred to as `Prod
 > Every file in the Production Directory will be processed to generate an OST report (if possible) and saved to the Output Location with the default file name. If the file name already exists in Output Location, it won't be overwritten unless _Overwrite when necessary_ is checked.
 
 Default, if the PDF already exists in the Output Location, it will not be overwritten. To disable this behavior, check `Overwrite Output files when necessary`.
-
-## Install OST Helper
-
-To install OST Helper, download the latest installer from [here](https://github.com/Homelet/OST/blob/master/Release/V%201.1/OST%20Helper_v1.1_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
-
-You can also create [a desktop shortcut](#how-to-create-desktop-shortcut) and [a start menu shortcut](#how-to-create-start-menu-shortcut).
-
-See the previous Release of OST Helper, check [here](Release).
 
 ## Frequent Asked Question
 
