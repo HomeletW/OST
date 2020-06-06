@@ -3,6 +3,8 @@ import tkinter.messagebox
 from os.path import dirname
 from tkinter import filedialog
 
+import numpy as np
+
 from Launcher import PATCH
 from OST_helper.UI.dialogs import AdjustmentWindow, EMPTY_TRACKER, \
     ThreadMonitorDialog, Tracker
@@ -207,7 +209,7 @@ class InfoFrame(tk.Frame):
         SETTING["img_dir"] = pdf_dir
         # first save the file in to a folder in the destination location
         # first write images to temp location
-        imgs = [img.convert("RGB") for img, name in images]
+        imgs = [self.alpha_to_color(img) for img, _ in images]
         first_imgs = imgs[0]
         other_imgs = imgs[1:]
         try:
@@ -232,6 +234,22 @@ class InfoFrame(tk.Frame):
         if open_file:
             self.open_file(pdf_path, progress_dialog)
         return True
+
+    @staticmethod
+    def alpha_to_color(image):
+        """Set all fully transparent pixels of an RGBA image to the specified color.
+        This is a very simple solution that might leave over some ugly edges, due
+        to semi-transparent areas. You should use alpha_composite_with color instead.
+
+        Source: http://stackoverflow.com/a/9166671/284318
+
+        Keyword Arguments:
+        image -- PIL RGBA Image object
+        color -- Tuple r, g, b (default 255, 255, 255)
+        """
+        background = Image.new("RGB", image.size, (255, 255, 255))
+        background.paste(image, mask=image.split()[3])
+        return background
 
     @staticmethod
     def open_file(pdf_path, progress_dialog):
@@ -321,9 +339,14 @@ class InfoFrame(tk.Frame):
         self.status_bar.set("File opened!")
 
     def about_action(self):
-        tk.messagebox.showinfo(parent=self.tk_frame, title="About",
-                               message="This software is developed and licenced by McCanny Secondary School.\nVersion: {}".format(
-                                   PATCH))
+        tk.messagebox.showinfo(
+            parent=self.tk_frame, title="About",
+
+            message="This software is Made for McCanny Secondary School, "
+                    "Dev by HongCheng Wei (homeletwei@gmail.com).\n\n"
+                    "Version : V {}\n\n"
+                    "Copyright 2020 HongCheng Wei. All rights reserved.".format(PATCH)
+        )
 
     def adjust_action(self):
         self.adjustment.show(self.get_ost())

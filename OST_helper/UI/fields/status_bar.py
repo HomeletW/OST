@@ -15,12 +15,12 @@ class StatusBar(tk.Frame):
 
     def add_items(self, message):
         self.size_config.divide([
-            [1, 19, 1]
+            [1, 29, 1]
         ])
         self.status_bar = tk.Label(
             self, text=message, relief=tk.SUNKEN, anchor=tk.W)
         self.patch_info = tk.Label(
-            self, text=PATCH, anchor=tk.E)
+            self, text="V {}".format(PATCH), anchor=tk.E)
         self.size_config.place([
             [self.status_bar, self.patch_info]
         ])

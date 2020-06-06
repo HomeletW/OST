@@ -39,6 +39,9 @@ class AdjustmentWindow(tk.Toplevel):
         self.sub_frame = None
         self.cancel_button = None
         self.confirm_button = None
+        self.image_update_thread = None
+        self.lock = threading.Lock()
+        self.update_image_finished = False
         self.x_offset_val = x_offset
         self.y_offset_val = y_offset
         self.font_size_val = font_size
@@ -103,19 +106,15 @@ class AdjustmentWindow(tk.Toplevel):
 
     def x_offset_action(self, _):
         self.update_image()
-        pass
 
     def y_offset_action(self, _):
         self.update_image()
-        pass
 
     def font_size_action(self, _):
         self.update_image()
-        pass
 
     def spacing_action(self, _):
         self.update_image()
-        pass
 
     def cancel(self):
         self.canceled = True
@@ -159,6 +158,24 @@ class AdjustmentWindow(tk.Toplevel):
         # self.wait_visibility()
 
     def update_image(self):
+        with self.lock:
+            if self.image_update_thread is None:
+                self.update_image_finished = False
+                self.image_update_thread = threading.Thread(
+                    target=self._update_image, name="Update Image", daemon=True
+                )
+                self.image_update_thread.start()
+                self.after(50, self._check_update_image_thread)
+
+    def _check_update_image_thread(self):
+        if self.update_image_finished:
+            # clear the thread
+            with self.lock:
+                self.image_update_thread = None
+        else:
+            self.after(50, self._check_update_image_thread)
+
+    def _update_image(self):
         x_off, y_off = self.x_offset.get(), self.y_offset.get()
         font_size, spacing = self.font_size.get(), self.spacing.get()
         self.ost.set_font_size(font_size)
@@ -173,6 +190,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.canvas.delete("all")
         # self.canvas.create_rectangle((0, 0, 3300 // 5, 2550 // 5), fill="white")
         self.canvas.create_image(0, 0, anchor="nw", image=self.image)
+        self.update_image_finished = True
 
     def set_x_offset(self, val):
         self.x_offset_val = val

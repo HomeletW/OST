@@ -447,13 +447,15 @@ class CoursePair(tk.Frame):
         if code not in COMMON_COURSE_CODE_LIBRARY:
             return
         title, level, credit, compulsory = COMMON_COURSE_CODE_LIBRARY[code]
-        if self.title.get() == "":
+        if self.title.get() != "" or \
+                self.grade.get() != "" or \
+                self.credit.get() != "" or \
+                self.compulsory.get() != "":
+            return
+        else:
             self.title.insert(0, title)
-        if self.grade.get() == "":
             self.grade.insert(0, level)
-        if self.credit.get() == "":
             self.credit.insert(0, credit)
-        if self.compulsory.get() == "":
             self.compulsory.insert(0, compulsory)
         self.info_frame.status_bar.set("{} Smart filled!".format(code))
 

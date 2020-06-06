@@ -2,7 +2,7 @@
     "draw_ost_template": true,
     "smart_fill": true,
     "train": true,
-    "json_dir": "/",
+    "json_dir": "F:/OneDrive/Desktop/OST",
     "img_dir": "F:/OneDrive/Desktop/OST/oUTPUT",
-    "last_session": null
+    "last_session": "F:/OneDrive/Desktop/OST/Homelet Wei_12001293_OST.json"
 }

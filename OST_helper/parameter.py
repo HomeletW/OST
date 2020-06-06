@@ -16,7 +16,7 @@ logging.basicConfig(
 )
 
 # paths
-CCCL_PATH = "./resource/default_cccl.json"
+CCCL_PATH = "./resource/CCCL.json"
 SETTING_PATH = "./resource/setting.json"
 MCCANNY_LOGO = "./resource/mccanny_logo.ico"
 OST_SAMPLE = "./resource/ost_sample.png"
