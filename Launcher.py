@@ -4,7 +4,9 @@ PATCH = "1.2"
 
 
 def main():
-    initialize()
+    from os.path import abspath, join, dirname
+    resource_path = abspath(join(dirname(__file__), "resource"))
+    initialize(resource_path)
     from OST_helper.UI.UI import Application
     application = Application()
     application.run()

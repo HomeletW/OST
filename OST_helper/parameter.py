@@ -5,7 +5,7 @@ import os
 import platform
 import subprocess
 from datetime import date
-from os.path import exists, expanduser, isdir, isfile, join
+from os.path import exists, expanduser, isdir, isfile, join, abspath, dirname
 
 from PIL import Image
 
@@ -15,20 +15,21 @@ logging.basicConfig(
     level=logging.DEBUG
 )
 
+
 # paths
-CCCL_PATH = "./resource/CCCL.json"
-SETTING_PATH = "./resource/setting.json"
-APP_LOGO = "./resource/logo.ico"
-OST_SAMPLE = "./resource/ost_sample.png"
-DEFAULT_OST_PATH = "./resource/default_ost.json"
-TFONT = "./resource/font.ttf"
-DEFAULT_COORDINATES_PATH = "./resource/default_coordinates.json"
+CCCL_PATH = None
+SETTING_PATH = None
+APP_LOGO = None
+OST_SAMPLE = None
+DEFAULT_OST_PATH = None
+TFONT = None
+DEFAULT_COORDINATES_PATH = None
 
 # os
 DEVICE_OS = platform.system()
 
 # ost sample
-OST_SAMPLE_IMAGE = Image.open(OST_SAMPLE)
+OST_SAMPLE_IMAGE = None
 
 # today
 today = None
@@ -184,11 +185,32 @@ def finalize():
     logger.info("Setting saved!")
 
 
-def initialize():
+def initialize(resource_path):
     global COMMON_COURSE_CODE_LIBRARY
     global SETTING
     global DEFAULT_OST_INFO
     global COORDINATES
+
+    global CCCL_PATH
+    global SETTING_PATH
+    global APP_LOGO
+    global OST_SAMPLE
+    global DEFAULT_OST_PATH
+    global TFONT
+    global DEFAULT_COORDINATES_PATH
+
+    global OST_SAMPLE_IMAGE
+
+    CCCL_PATH = join(resource_path, "CCCL.json")
+    SETTING_PATH = join(resource_path, "setting.json")
+    APP_LOGO = join(resource_path, "logo.ico")
+    OST_SAMPLE = join(resource_path, "ost_sample.png")
+    DEFAULT_OST_PATH = join(resource_path, "default_ost.json")
+    TFONT = join(resource_path, "font.ttf")
+    DEFAULT_COORDINATES_PATH = join(resource_path, "default_coordinates.json")
+
+    OST_SAMPLE_IMAGE = Image.open(OST_SAMPLE)
+
     logger = logging.getLogger()
     # initialize CCCL
     try:
