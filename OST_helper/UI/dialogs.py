@@ -26,7 +26,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.canvas_size = c_width, c_height
         super().__init__(master=master, width=c_width, height=c_height + 250)
         self.wm_title("Adjustment")
-        self.wm_iconbitmap(MCCANNY_LOGO)
+        self.wm_iconbitmap(APP_LOGO)
         self.info_frame = info_frame
         self.resizable(0, 0)
         self.ost_sample = OST_SAMPLE_IMAGE
@@ -87,8 +87,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.cancel_button = tk.Button(self.sub_frame, text="Cancel",
                                        command=self.cancel)
         self.confirm_button = tk.Button(self.sub_frame, text="Confirm",
-                                        command=self.confirm,
-                                        bg="#CC0066", fg="white")
+                                        command=self.confirm)
         self.x_offset.set(self.x_offset_val)
         self.y_offset.set(self.y_offset_val)
         self.font_size.set(self.font_size_val)
@@ -230,7 +229,7 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
         super().__init__(master=master, width=width, height=height)
         self.transient(master)
         self.title(title)
-        self.wm_iconbitmap(MCCANNY_LOGO)
+        self.wm_iconbitmap(APP_LOGO)
         self.resizable(0, 0)
         self.info_frame = info_frame
         self.thread_finished = False
@@ -290,11 +289,9 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
                 .center(80, "=")
         )
         if error:
-            self.ok.config(bg=self.red, fg="white",
-                           text="Process Failed, Press to Exit!")
+            self.ok.config(text="Process Failed, Press to Exit!")
         else:
-            self.ok.config(bg=self.green, fg="white",
-                           text="Process Succeed, Press to Exit!")
+            self.ok.config(text="Process Succeed, Press to Exit!")
         self.ok.config(state=tk.NORMAL)
 
     @staticmethod
@@ -364,7 +361,7 @@ class ProductionDialog(tk.Toplevel):
         self.transient(master)
         self.info_frame = info_frame
         self.title("Production Tool")
-        self.wm_iconbitmap(MCCANNY_LOGO)
+        self.wm_iconbitmap(APP_LOGO)
         self.resizable(0, 0)
         self.main_frame = None
         self.description_label = None
@@ -565,7 +562,7 @@ class ProductionDialog(tk.Toplevel):
             onvalue=True, offvalue=False, variable=self.overwrite_output_var,
             anchor=tk.W)
         self.start_button = tk.Button(
-            self.main_frame, text="Start Production", bg="#CC0066", fg="white",
+            self.main_frame, text="Start Production",
             command=self.start_production)
         self.cancel_button = tk.Button(
             self.main_frame, text="Cancel",

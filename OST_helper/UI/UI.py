@@ -3,8 +3,6 @@ import tkinter.messagebox
 from os.path import dirname
 from tkinter import filedialog
 
-import numpy as np
-
 from Launcher import PATCH
 from OST_helper.UI.dialogs import AdjustmentWindow, EMPTY_TRACKER, \
     ThreadMonitorDialog, Tracker
@@ -28,7 +26,7 @@ class Application:
         self.title = title
         self.update_title()
         self.root.resizable(0, 0)
-        self.root.iconbitmap(MCCANNY_LOGO)
+        self.root.iconbitmap(APP_LOGO)
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.infoFrame = None
         self.add_info_frame()
@@ -94,7 +92,7 @@ class InfoFrame(tk.Frame):
         self.utility_panel = UtilityPanel(
             self, size_config=divided[3][0])
         self.status_bar = StatusBar(
-            self, message="Welcome to McCanny OST Entry system!",
+            self, message="Welcome to OST Entry system!",
             size_config=divided[4][0])
         self.tk_frame.config(menu=self.menubar)
         x_offset, y_offset = COORDINATES["Offset"]
@@ -218,7 +216,7 @@ class InfoFrame(tk.Frame):
                 format="pdf",
                 save_all=True,
                 append_images=other_imgs,
-                author="McCanny Secondary School",
+                author="OST Helper",
                 subject="OST",
             )
         except Exception as e:
@@ -301,6 +299,8 @@ class InfoFrame(tk.Frame):
         self.app.update_title(ost.full_name())
         self.logger.info("Draft saved on {}!".format(self.save_path))
         self.status_bar.set("Draft saved on {}!".format(self.save_path))
+        # train the CCCL
+        self.course_panel.train()
 
     def save_as_action(self, ost=None):
         if ost is None:

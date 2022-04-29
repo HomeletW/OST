@@ -29,11 +29,10 @@ class UtilityPanel(tk.Frame):
                               command=self.master.open_action)
         self.save = tk.Button(self, text="Save",
                               command=self.master.save_action)
-        self.adjust = tk.Button(self, text="Adjust...",
+        self.adjust = tk.Button(self, text="Preview...",
                                 command=self.master.adjust_action, fg="#CC0066")
         self.generate = tk.Button(self, text="Generate!",
-                                  command=self.master.generate_action,
-                                  bg="#CC0066", fg="white")
+                                  command=self.master.generate_action)
         self.size_config.place([
             [self.ost_date_of_issue, None, self.new, self.open, self.save,
              self.adjust, self.generate]

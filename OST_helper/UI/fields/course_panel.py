@@ -225,8 +225,7 @@ class CoursePanel(tk.Frame):
         ])
         self.canvas = tk.Canvas(self, bd=0, highlightthickness=0)
         self.frame = tk.Frame(self.canvas)
-        self.add = tk.Button(self, text="+ ADD Course", command=self.add_course,
-                             bg="#669966", fg="white")
+        self.add = tk.Button(self, text="+ ADD Course", command=self.add_course)
         self.date_label = tk.Label(self, text="Date (Y/M)", anchor=tk.S)
         self.grade_label = tk.Label(self, text="Level", anchor=tk.S)
         self.title_label = tk.Label(self, text="Course Title", anchor=tk.S)
@@ -238,11 +237,10 @@ class CoursePanel(tk.Frame):
         self.scrollBar = tk.Scrollbar(self, orient="vertical",
                                       command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scrollBar.set)
-        self.sort = tk.Button(self, text="Sort", command=self.sort_course,
-                              bg="#669966", fg="white")
+        self.sort = tk.Button(self, text="Sort", command=self.sort_course)
         self.credit_summary = tk.Label(self, text="0", anchor=tk.N)
         self.compulsory_summary = tk.Label(self, text="0", anchor=tk.N)
-        self.symbol_label = tk.Label(self, text="SUMMARY OF CREDITS 🡆",
+        self.symbol_label = tk.Label(self, text="SUMMARY OF CREDITS \u2192",
                                      anchor=tk.NE, justify=tk.LEFT)
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
         self.size_config.place([
@@ -268,7 +266,7 @@ class CoursePanel(tk.Frame):
         self.course_size = canvas_size.divide(
             [[1, 1]] * self.visible_on_screen
         )[0][0]
-        self.bind("<FocusOut>", self.train)
+        # self.bind("<FocusOut>", self.train)
         # self.canvas.bind_all("<MouseWheel>", self.mouse_scroll)
 
     def set(self, courses, sort=True):
@@ -328,7 +326,7 @@ class CoursePair(tk.Frame):
         self.size_config.divide([
             [1, 1, 3, 2, 12, 3, 2, 2, 2, 3],
         ])
-        self.delete = tk.Button(master=self, text="X", bg="#CC0066", fg="white")
+        self.delete = tk.Button(master=self, text="X")
         self.delete.bind("<Button-1>", button_action)
         self.date = tk.Entry(master=self, bd=2)
         self.grade = tk.Entry(master=self, bd=2)

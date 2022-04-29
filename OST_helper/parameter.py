@@ -18,7 +18,7 @@ logging.basicConfig(
 # paths
 CCCL_PATH = "./resource/CCCL.json"
 SETTING_PATH = "./resource/setting.json"
-MCCANNY_LOGO = "./resource/mccanny_logo.ico"
+APP_LOGO = "./resource/logo.ico"
 OST_SAMPLE = "./resource/ost_sample.png"
 DEFAULT_OST_PATH = "./resource/default_ost.json"
 TFONT = "./resource/font.ttf"
@@ -109,15 +109,15 @@ default_ost = {
     "date_of_birth": ["", "", ""],
     "name_of_district_school_board": "Toronto Private Inspected",
     "district_school_board_number": "",
-    "name_of_school": "McCanny Secondary School",
-    "school_number": "668908",
+    "name_of_school": "",
+    "school_number": "",
     "date_of_entry": ["", "", ""],
-    "community_involvement_flag": True,
-    "provincial_secondary_school_literacy_requirement_flag": True,
+    "community_involvement_flag": False,
+    "provincial_secondary_school_literacy_requirement_flag": False,
     "specialized_program": "",
     "diploma_or_certificate": "Ontario Secondary School Diploma",
     "diploma_or_certificate_date_of_issue": ["", ""],
-    "authorization": "Dr. Alireza Rafiee",
+    "authorization": "",
     "course_list": [],
     "course_font_size": 50,
     "course_spacing": 5,
