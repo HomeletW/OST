@@ -18,7 +18,7 @@ OST Helper is a program that helps to create and modify the Ontario Student Tran
 - OST Helper saves each OST as an [json file](https://en.wikipedia.org/wiki/JSON) (basically a text file), which makes storing and transporting OST easily (takes less space).
 - Users can choose to export the OST to PDF either with a template in the background (good for backup), or without a template in the background (good for print).
 - The `Smart Fill` and `Train` feature helps quickly add Course to the OST, check out [Smart Fill and Train](#smart-fill-and-train).
-- The `Adjust` feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#using-adjustment).
+- The `Preview` feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#using-adjustment).
 - Production Tool helps to create OST in batches, more detail in production tools, check out [Production Tool](#using-production-tool).
 
 ## Get Started
@@ -55,7 +55,7 @@ After Finnish filling the required field, save your work by pressing `Save` in t
 
 __*Note that OST Helper does not save the file automatically, it only saves when pressing `Save` and when you exit the program.*__
 
-Now it is ready to generate the OST to PDF, but you might want to preview what the OST looks like, press the `Adjust...` button in the bottom bar to make look at a preview. More about Adjustment, check out [Adjustment](#using-adjustment).
+Now it is ready to generate the OST to PDF, but you might want to preview what the OST looks like, press the `Preview...` button in the bottom bar to make look at a preview. More about Adjustment, check out [Adjustment](#using-adjustment).
 
 After inspected the OST and made the Adjustment, press the `Generate!` button, choose your output directory, and leave the rest to OST Helper.
 
