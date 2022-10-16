@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OST Helper"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "Hongcheng Wei"
 #define MyAppURL "https://github.com/HomeletW/OST"
 #define MyAppExeName "OST Helper.exe"
@@ -20,15 +20,15 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\OST_Helper
-DisableDirPage=yes
+DisableDirPage=no
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\Homelet\PycharmProjects\OST\LICENSE
-InfoBeforeFile=C:\Users\Homelet\PycharmProjects\OST\README.md
+LicenseFile=LICENSE
+InfoBeforeFile=README.md
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
-OutputDir=C:\Users\Homelet\PycharmProjects\OST\Release\V 1.2
+PrivilegesRequired=lowest
+OutputDir=Release\V 1.3
 OutputBaseFilename=OST Helper_installer
-SetupIconFile=C:\Users\Homelet\PycharmProjects\OST\resource\logo.ico
+SetupIconFile=resource\logo.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -40,8 +40,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Homelet\PycharmProjects\OST\Release\V 1.2\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Homelet\PycharmProjects\OST\Release\V 1.2\resource\*"; DestDir: "{app}\resource"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Release\V 1.3\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Release\V 1.3\resource\*"; DestDir: "{app}\resource"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -49,5 +49,5 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFileName: "{app}\resource\{#MyAppIcon}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+; Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
