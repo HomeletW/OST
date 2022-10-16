@@ -11,10 +11,108 @@ from tkinter.ttk import Progressbar
 from PIL import ImageTk
 
 from OST_helper.UI.tk_objects import DEFAULT_SPACING, ScalePair, \
-    TopDownSizeConfig
+    TopDownSizeConfig, LabelEntryPair
 from OST_helper.data_handler import Drawer
 from OST_helper.parameter import *
 
+
+class AutoValueWindow(tk.Toplevel):
+    def __init__(self, master, course_panel, value_name, override_text, use_auto, on_set):
+        width, height = 350, 150
+        self.size_config = TopDownSizeConfig(width=width, height=height)
+        self._size = width, height
+        super().__init__(master=master, width=width, height=height)
+        self.wm_title(f"Set {value_name}")
+        self.wm_iconbitmap(APP_LOGO)
+        self.course_panel = course_panel
+        self.resizable(False, False)
+        self.value_name = value_name
+        self.override_text = override_text
+        self.use_auto = use_auto
+        self.on_set = on_set
+        self.canceled = False
+        self.main_frame = None
+        self.override_entry = None
+        self.use_auto_var = None
+        self.use_auto_checkBox = None
+        self.cancel_button = None
+        self.confirm_button = None
+        self.add_item()
+        self.protocol("WM_DELETE_WINDOW", self.cancel)
+        self.hide()
+
+    def add_item(self):
+        self.main_frame = tk.Frame(self)
+        width, height = self._size
+        self.main_frame.place(x=0, y=0, width=width, height=height)
+        divided = self.size_config.divide([
+            [2, 1],
+            [1, 1],
+            [1, 1, 2],
+        ], internal=False)
+        self.override_entry = LabelEntryPair(master=self.main_frame,
+                                             label_text=self.value_name,
+                                             entry_placeholder=self.override_text,
+                                             size_config=divided[0][0])
+        self.use_auto_var = tk.BooleanVar()
+        self.use_auto_var.trace_add("write", self.sync_use_auto)
+        self.use_auto_checkBox = tk.Checkbutton(self.main_frame,
+            text=f"Automatically calculate {self.value_name}",
+            variable=self.use_auto_var)
+        self.cancel_button = tk.Button(self.main_frame, text="Cancel",
+                                       command=self.cancel)
+        self.confirm_button = tk.Button(self.main_frame, text="Confirm",
+                                        command=self.confirm)
+        self.size_config.place([
+            [self.override_entry],
+            [self.use_auto_checkBox],
+            [self.cancel_button, self.confirm_button],
+        ])
+        self.use_auto_var.set(self.use_auto)   # trigger trace
+
+    def sync_use_auto(self, *args):
+        if self.use_auto_var.get():
+            self.override_entry.disable()
+        else:
+            self.override_entry.enable()
+
+    def hide(self):
+        self.wm_withdraw()
+        self.grab_release()
+
+    def show(self):
+        p_x = self.course_panel.winfo_rootx()
+        p_y = self.course_panel.winfo_rooty()
+        p_height = self.course_panel.winfo_height()
+        p_width = self.course_panel.winfo_width()
+        p_center_x, p_center_y = p_x + p_width // 2, p_y + p_height // 2
+        width, height = self._size
+        x, y = p_center_x - width // 2, p_center_y - height // 2
+        self.wm_geometry("+{}+{}".format(x, y))
+        self.update()
+        self.deiconify()
+        self.grab_set()
+        # self.wait_visibility()
+
+    def confirm(self):
+        self.canceled = False
+        self.hide()
+        self.use_auto = self.use_auto_var.get()
+        self.override_text = self.override_entry.get()
+        self.on_set()   # call on_set callback
+        if self.use_auto:
+            self.course_panel.master.status_bar.set(
+                f"Auto {self.value_name} calculation enabled")
+        else:
+            self.course_panel.master.status_bar.set(
+                f"Auto {self.value_name} calculation disabled")
+
+    def cancel(self):
+        self.canceled = True
+        self.hide()
+        self.use_auto_var.set(self.use_auto)
+        self.override_entry.set(self.override_text)
+        self.course_panel.master.status_bar.set(f"Set {self.value_name} canceled")
 
 class AdjustmentWindow(tk.Toplevel):
     def __init__(self, master, info_frame, x_offset, y_offset, font_size,
@@ -28,7 +126,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.wm_title("Adjustment")
         self.wm_iconbitmap(APP_LOGO)
         self.info_frame = info_frame
-        self.resizable(0, 0)
+        self.resizable(False, False)
         self.ost_sample = OST_SAMPLE_IMAGE
         self.canvas = None
         self.x_offset = None
@@ -123,7 +221,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.font_size.set(self.font_size_val)
         self.spacing.set(self.spacing_val)
         self.ost = None
-        self.info_frame.status_bar.set("Adjustment Canceled!")
+        self.info_frame.status_bar.set("Adjustment canceled")
 
     def confirm(self):
         self.canceled = False
@@ -134,7 +232,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.spacing_val = self.spacing.get()
         COORDINATES["Offset"] = (self.x_offset_val, self.y_offset_val)
         self.ost = None
-        self.info_frame.status_bar.set("Adjustment Confirmed!")
+        self.info_frame.status_bar.set("Adjustment confirmed")
 
     def hide(self):
         self.wm_withdraw()
@@ -230,7 +328,7 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
         self.transient(master)
         self.title(title)
         self.wm_iconbitmap(APP_LOGO)
-        self.resizable(0, 0)
+        self.resizable(False, False)
         self.info_frame = info_frame
         self.thread_finished = False
         kwargs["progress_dialog"] = self
@@ -362,7 +460,7 @@ class ProductionDialog(tk.Toplevel):
         self.info_frame = info_frame
         self.title("Production Tool")
         self.wm_iconbitmap(APP_LOGO)
-        self.resizable(0, 0)
+        self.resizable(False, False)
         self.main_frame = None
         self.description_label = None
         self.json_var = None
@@ -523,7 +621,7 @@ class ProductionDialog(tk.Toplevel):
         self.description_label = tk.Label(
             self.main_frame,
             text="Welcome to the Production Tool!\n"
-                 "Choose your Production Directory and Output Location to start production.\n"
+                 "Choose your Production Directory and Output Location to start.\n"
                  "\n"
                  "Every file in the Production Directory will be processed to "
                  "generate an OST report (if possible) and saved to the "

@@ -121,6 +121,10 @@ default_ost = {
     "course_list": [],
     "course_font_size": 50,
     "course_spacing": 5,
+    "auto_credit_summary": True,
+    "auto_compulsory_summary": True,
+    "credit_summary_override": "",
+    "compulsory_summary_override": ""
 }
 default_coordinates = {
     "Size": (3300, 2532),

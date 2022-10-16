@@ -1,6 +1,6 @@
 from OST_helper.parameter import finalize, initialize
 
-PATCH = "1.2"
+PATCH = "1.3"
 
 
 def main():

@@ -32,14 +32,14 @@ def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
         draw_image(img, image, config=(course_x, course_y), offset=offset)
         # draw credit summary
         draw_text(drawer=drawer,
-                  text=str(info.count_course_credit()),
+                  text=str(info.course_credit_summary()),
                   config=COORDINATES["SummaryOfCredit"],
                   font=font,
                   offset=offset,
                   alignment_flag=flag_center)
         # draw compulsory summary
         draw_text(drawer=drawer,
-                  text=str(info.count_course_compulsory()),
+                  text=str(info.course_compulsory_summary()),
                   config=COORDINATES["SummaryOfCompulsory"],
                   font=font,
                   offset=offset,

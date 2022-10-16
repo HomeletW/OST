@@ -133,6 +133,7 @@ class LabelEntryPair(tk.Frame):
             [self.label],
             [self.entry]
         ])
+        self.enable()
 
     def set(self, value):
         set_entry_value(self.entry, value)
@@ -140,6 +141,13 @@ class LabelEntryPair(tk.Frame):
     def get(self):
         return self.entry.get()
 
+    def disable(self):
+        self.label.config(state="disabled")
+        self.entry.config(state="disabled")
+
+    def enable(self):
+        self.label.config(state="normal")
+        self.entry.config(state="normal")
 
 class DatePair(tk.Frame):
     def __init__(self, master, text, date, size_config: TopDownSizeConfig,

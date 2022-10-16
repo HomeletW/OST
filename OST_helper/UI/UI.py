@@ -131,9 +131,8 @@ class InfoFrame(tk.Frame):
 
     def set_ost(self, ost):
         data = ost.to_data()
-        course = data["course_list"]
         self.personal_info_panel.set(data)
-        self.course_panel.set(course, sort=False)
+        self.course_panel.set(data, sort=False)
         self.other_info_panel.set(data)
         self.utility_panel.set(data)
         self.adjustment.set_font_size(data["course_font_size"])
@@ -144,8 +143,7 @@ class InfoFrame(tk.Frame):
         self.personal_info_panel.get(data)
         self.other_info_panel.get(data)
         self.utility_panel.get(data)
-        course_list = self.course_panel.get()
-        data["course_list"] = course_list
+        self.course_panel.get(data)
         data["course_font_size"] = self.adjustment.font_size_val
         data["course_spacing"] = self.adjustment.spacing_val
         return Data.OST_info.from_data(data)

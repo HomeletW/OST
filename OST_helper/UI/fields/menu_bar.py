@@ -72,18 +72,18 @@ class MenuBar(tk.Menu):
         draw_ost_template = self.draw_ost_template.get()
         SETTING["draw_ost_template"] = draw_ost_template
         self.info_panel.status_bar.set(
-            "Draw ost Template has been set to {}!".format(
+            "Draw ost Template has been set to {}".format(
                 "ON" if draw_ost_template else "OFF"))
 
     def toggle_smart_fill(self):
         smart_fill = self.smart_fill.get()
         SETTING["smart_fill"] = smart_fill
         self.info_panel.status_bar.set(
-            "Smart fill has been set to {}!".format(
+            "Smart fill has been set to {}".format(
                 "ON" if smart_fill else "OFF"))
 
     def toggle_train(self):
         train = self.train.get()
         SETTING["train"] = train
         self.info_panel.status_bar.set(
-            "Train has been set to {}!".format("ON" if train else "OFF"))
+            "Train has been set to {}".format("ON" if train else "OFF"))

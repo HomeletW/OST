@@ -4,6 +4,7 @@ import tkinter as tk
 import tkinter.messagebox
 
 from OST_helper.UI.tk_objects import TopDownSizeConfig, set_entry_value
+from OST_helper.UI.dialogs import AutoValueWindow
 from OST_helper.data_handler import Data
 from OST_helper.parameter import *
 
@@ -31,6 +32,8 @@ class CoursePanel(tk.Frame):
         self.sort = None
         self.credit_summary = None
         self.compulsory_summary = None
+        self.set_credit_summary = None
+        self.set_compulsory_summary = None
         self.visible_on_screen = 10
         self.course_size = None
         self._order_widgets = {
@@ -50,8 +53,8 @@ class CoursePanel(tk.Frame):
 
     def add_course(self, sync=True):
         c = CoursePair(self.frame, self.master, self.course_size,
-                       self.delete_action, self.count_credit,
-                       self.count_compulsory, self.count_courses,
+                       self.delete_action, self.sync_credit,
+                       self.sync_compulsory, self.count_courses,
                        self.next_action, self.enter_action, self.prev_action,
                        self.right_action, self.left_action)
         self.courses.append(c)
@@ -139,27 +142,39 @@ class CoursePanel(tk.Frame):
         c.destroy()
         self.index -= 1
         self.courses.remove(c)
-        self.count_credit()
-        self.count_compulsory()
+        self.sync_credit()
+        self.sync_compulsory()
         self.count_courses()
 
     def count_courses(self):
         total_course = sum([1 for course in self.courses if course.is_course()])
-        self.add.config(text="+ ADD Course{}".format(
+        self.add.config(text="+ Add Course{}".format(
             "" if self.index == 0 else " ({})".format(total_course)))
         return True
 
-    def count_credit(self):
-        value = sum([c.calculate_credit() for c in self.courses])
-        if not isinstance(value, int) and value.is_integer():
-            value = int(value)
-        self.credit_summary.config(text=str(value))
+    def sync_credit(self):
+        if not self.set_credit_summary.use_auto:
+            self.credit_summary.config(text=self.set_credit_summary.override_text)
+        else:
+            value = sum([c.calculate_credit() for c in self.courses])
+            # if not isinstance(value, int) and value.is_integer():
+            #     value = int(value)
+            self.credit_summary.config(text=str(value))
         return True
 
-    def count_compulsory(self):
-        value = len([c for c in self.courses if c.is_compulsory_active()])
-        self.compulsory_summary.config(text=str(value))
+    def set_credit_action(self, *args):
+        self.set_credit_summary.show()
+
+    def sync_compulsory(self):
+        if not self.set_compulsory_summary.use_auto:
+            self.compulsory_summary.config(text=self.set_compulsory_summary.override_text)
+        else:
+            value = sum([c.calculate_compulsory() for c in self.courses])
+            self.compulsory_summary.config(text=str(value))
         return True
+
+    def set_compulsory_action(self, *args):
+        self.set_compulsory_summary.show()
 
     def train(self, _=None):
         if not SETTING["train"]:
@@ -172,7 +187,7 @@ class CoursePanel(tk.Frame):
             COMMON_COURSE_CODE_LIBRARY[code.upper()] = (
                 title, level, credit, compulsory)
         self.master.status_bar.set(
-            "{} Trained!".format(
+            "{} trained".format(
                 ",".join(code for code, _, _, _, _ in train_able)))
 
     def sort_course(self):
@@ -225,7 +240,7 @@ class CoursePanel(tk.Frame):
         ])
         self.canvas = tk.Canvas(self, bd=0, highlightthickness=0)
         self.frame = tk.Frame(self.canvas)
-        self.add = tk.Button(self, text="+ ADD Course", command=self.add_course)
+        self.add = tk.Button(self, text="+ Add Course", command=self.add_course)
         self.date_label = tk.Label(self, text="Date (Y/M)", anchor=tk.S)
         self.grade_label = tk.Label(self, text="Level", anchor=tk.S)
         self.title_label = tk.Label(self, text="Course Title", anchor=tk.S)
@@ -234,12 +249,13 @@ class CoursePanel(tk.Frame):
         self.credit_label = tk.Label(self, text="Credit", anchor=tk.S)
         self.compulsory_label = tk.Label(self, text="Comp.", anchor=tk.S)
         self.note_label = tk.Label(self, text="Note", anchor=tk.S)
-        self.scrollBar = tk.Scrollbar(self, orient="vertical",
-                                      command=self.canvas.yview)
+        self.scrollBar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scrollBar.set)
         self.sort = tk.Button(self, text="Sort", command=self.sort_course)
-        self.credit_summary = tk.Label(self, text="0", anchor=tk.N)
-        self.compulsory_summary = tk.Label(self, text="0", anchor=tk.N)
+        self.set_credit_summary = AutoValueWindow(self.master, self, "Credit Summary", "", True, on_set=self.sync_credit)
+        self.set_compulsory_summary = AutoValueWindow(self.master, self, "Compulsory Summary", "", True, on_set=self.sync_compulsory)
+        self.credit_summary = tk.Button(self, text="0", anchor=tk.N, command=self.set_credit_action)
+        self.compulsory_summary = tk.Button(self, text="0", anchor=tk.N, command=self.set_compulsory_action)
         self.symbol_label = tk.Label(self, text="SUMMARY OF CREDITS \u2192",
                                      anchor=tk.NE, justify=tk.LEFT)
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
@@ -269,29 +285,37 @@ class CoursePanel(tk.Frame):
         # self.bind("<FocusOut>", self.train)
         # self.canvas.bind_all("<MouseWheel>", self.mouse_scroll)
 
-    def set(self, courses, sort=True):
+    def set(self, data, sort=True):
         for c in self.courses:
             c.grid_forget()
         self.courses.clear()
         self.index = 0
-        for data in courses:
+        for course in data["course_list"]:
             c = self.add_course()
-            c.set(data)
+            c.set(course)
         if sort:
             self.sort_course()
         self.sync_canvas_loc(0)
         self.count_courses()
-        self.count_compulsory()
-        self.count_credit()
+        # credit summary and compulsory summary
+        self.set_credit_summary.use_auto = data["auto_credit_summary"]
+        self.set_compulsory_summary.use_auto = data["auto_compulsory_summary"]
+        self.set_credit_summary.override_text = data["credit_summary_override"]
+        self.set_compulsory_summary.override_text = data["compulsory_summary_override"]
+        self.sync_compulsory()
+        self.sync_credit()
 
-    def get(self):
-        course = [c.get() for c in self.courses]
-        return course
+    def get(self, data):
+        data["course_list"] = [c.get() for c in self.courses]
+        data["auto_credit_summary"] = self.set_credit_summary.use_auto
+        data["auto_compulsory_summary"] = self.set_compulsory_summary.use_auto
+        data["credit_summary_override"] = self.set_credit_summary.override_text
+        data["compulsory_summary_override"] = self.set_compulsory_summary.override_text
 
 
 class CoursePair(tk.Frame):
     def __init__(self, master, info_frame, size_config: TopDownSizeConfig,
-                 button_action, count_credit, count_compulsory, count_course,
+                 button_action, sync_credit, sync_compulsory, count_course,
                  next_action, enter_action, prev_action, right_action,
                  left_action):
         self.size_config = size_config
@@ -310,18 +334,18 @@ class CoursePair(tk.Frame):
         self._ordered_widgets = None
         self._inv_ordered_widgets = None
         self.info_frame = info_frame
-        self.add_items(button_action, count_credit,
-                       count_compulsory, count_course, next_action,
+        self.add_items(button_action, sync_credit,
+                       sync_compulsory, count_course, next_action,
                        enter_action, prev_action, right_action, left_action)
 
-    def add_items(self, button_action, count_credit,
-                  count_compulsory, count_course, next_action, enter_action,
+    def add_items(self, button_action, sync_credit,
+                  sync_compulsory, count_course, next_action, enter_action,
                   prev_action, right_action, left_action):
         def smart_fill(_):
             self.smart_fill()
             count_course()
-            count_compulsory()
-            count_credit()
+            sync_compulsory()
+            sync_credit()
 
         self.size_config.divide([
             [1, 1, 3, 2, 12, 3, 2, 2, 2, 3],
@@ -334,9 +358,9 @@ class CoursePair(tk.Frame):
         self.code = tk.Entry(master=self, bd=2)
         self.percentage = tk.Entry(master=self, bd=2)
         self.credit = tk.Entry(master=self, bd=2, validate="focusout",
-                               validatecommand=count_credit)
+                               validatecommand=sync_credit)
         self.compulsory = tk.Entry(master=self, bd=2, validate="focusout",
-                                   validatecommand=count_compulsory)
+                                   validatecommand=sync_compulsory)
         self.note = tk.Entry(master=self, bd=2)
         self._widgets = {
             "delete": self.delete,
@@ -455,19 +479,28 @@ class CoursePair(tk.Frame):
             self.grade.insert(0, level)
             self.credit.insert(0, credit)
             self.compulsory.insert(0, compulsory)
-        self.info_frame.status_bar.set("{} Smart filled!".format(code))
+        self.info_frame.status_bar.set("{} filled".format(code))
 
-    def is_compulsory_active(self):
-        return self.compulsory.get() != ""
+    def is_course(self):
+        # TODO : duplicated code from Data.Course
+        return self.code.get() != ""
+
+    def calculate_compulsory(self):
+        # TODO : duplicated code from Data.Course
+        if self.compulsory.get() == "":
+            return 0
+        else:
+            try:
+                return float(self.compulsory.get())
+            except ValueError:
+                return 1
 
     def calculate_credit(self):
+        # TODO : duplicated code from Data.Course
         try:
             return float(self.credit.get())
         except ValueError:
             return 0
-
-    def is_course(self):
-        return self.code.get() != ""
 
     def train_data(self):
         code, title, level, credit, compulsory = self.code.get(), self.title.get(), self.grade.get(), self.credit.get(), self.compulsory.get()

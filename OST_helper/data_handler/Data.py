@@ -28,12 +28,16 @@ class Course:
     def is_course(self):
         return self.code != ""
 
-    def is_compulsory_active(self):
-        return self.is_course() and self.compulsory != ""
+    def calculate_compulsory(self):
+        if self.compulsory == "":
+            return 0
+        else:
+            try:
+                return float(self.compulsory)
+            except ValueError:
+                return 1
 
     def calculate_credit(self):
-        if not self.is_course():
-            return 0
         try:
             return float(self.credit)
         except ValueError:
@@ -62,24 +66,21 @@ class OST_info:
                  student_number=default_ost["student_number"],
                  gender=default_ost["gender"],
                  date_of_birth=default_ost["date_of_birth"],
-                 name_of_district_school_board=default_ost[
-                     "name_of_district_school_board"],
-                 district_school_board_number=default_ost[
-                     "district_school_board_number"],
+                 name_of_district_school_board=default_ost["name_of_district_school_board"],
+                 district_school_board_number=default_ost["district_school_board_number"],
                  name_of_school=default_ost["name_of_school"],
                  school_number=default_ost["school_number"],
                  date_of_entry=default_ost["date_of_entry"],
-                 community_involvement_flag=default_ost[
-                     "community_involvement_flag"],
-                 provincial_secondary_school_literacy_requirement_flag=
-                 default_ost[
-                     "provincial_secondary_school_literacy_requirement_flag"],
+                 community_involvement_flag=default_ost["community_involvement_flag"],
+                 provincial_secondary_school_literacy_requirement_flag=default_ost["provincial_secondary_school_literacy_requirement_flag"],
                  specialized_program=default_ost["specialized_program"],
-                 diploma_or_certificate=default_ost[
-                     "diploma_or_certificate"],
-                 diploma_or_certificate_date_of_issue=default_ost[
-                     "diploma_or_certificate_date_of_issue"],
-                 authorization=default_ost["authorization"]
+                 diploma_or_certificate=default_ost["diploma_or_certificate"],
+                 diploma_or_certificate_date_of_issue=default_ost["diploma_or_certificate_date_of_issue"],
+                 authorization=default_ost["authorization"],
+                 auto_credit_summary=default_ost["auto_credit_summary"],
+                 auto_compulsory_summary=default_ost["auto_compulsory_summary"],
+                 credit_summary_override=default_ost["credit_summary_override"],
+                 compulsory_summary_override=default_ost["compulsory_summary_override"],
                  ):
         self._OST_date_of_issue = [OST_date_of_issue[0], OST_date_of_issue[1],
                                    OST_date_of_issue[2]]
@@ -100,22 +101,30 @@ class OST_info:
         self._provincial_secondary_school_literacy_requirement_flag = provincial_secondary_school_literacy_requirement_flag
         self._specialized_program = specialized_program
         self._diploma_or_certificate = diploma_or_certificate
-        self._diploma_or_certificate_date_of_issue = [
-            diploma_or_certificate_date_of_issue[0],
-            diploma_or_certificate_date_of_issue[1]]
+        self._diploma_or_certificate_date_of_issue = [diploma_or_certificate_date_of_issue[0], diploma_or_certificate_date_of_issue[1]]
         self._authorization = authorization
         self._course_list = []
         self._course_font_size = 50
         self._course_spacing = 5
+        self._auto_credit_summary = auto_credit_summary
+        self._auto_compulsory_summary = auto_compulsory_summary
+        self._credit_summary_override = credit_summary_override
+        self._compulsory_summary_override = compulsory_summary_override
 
     def course(self):
         return self._course_list
 
-    def count_course_credit(self):
-        return sum([c.calculate_credit() for c in self._course_list])
+    def course_credit_summary(self):
+        if not self._auto_credit_summary:
+            return self._credit_summary_override
+        else:
+            return sum([c.calculate_credit() for c in self._course_list])
 
-    def count_course_compulsory(self):
-        return len([c for c in self._course_list if c.is_compulsory_active()])
+    def course_compulsory_summary(self):
+        if not self._auto_compulsory_summary:
+            return self._compulsory_summary_override
+        else:
+            return sum([c.calculate_compulsory() for c in self._course_list])
 
     def course_font_size(self):
         return self._course_font_size
@@ -235,10 +244,13 @@ class OST_info:
                 "diploma_or_certificate": self._diploma_or_certificate,
                 "diploma_or_certificate_date_of_issue": self._diploma_or_certificate_date_of_issue,
                 "authorization": self._authorization,
-                "course_list": [course.to_json() for course in
-                                self._course_list],
+                "course_list": [course.to_json() for course in self._course_list],
                 "course_font_size": self._course_font_size,
                 "course_spacing": self._course_spacing,
+                "auto_credit_summary": self._auto_credit_summary,
+                "auto_compulsory_summary": self._auto_compulsory_summary,
+                "credit_summary_override": self._credit_summary_override,
+                "compulsory_summary_override": self._compulsory_summary_override
                 }
         return data
 
@@ -281,6 +293,11 @@ class OST_info:
             course in data["course_list"]]
         course_font_size = data["course_font_size"]
         course_spacing = data["course_spacing"]
+        # New data points, use "get" for backward compatibility
+        auto_credit_summary = data.get("auto_credit_summary", True)
+        auto_compulsory_summary = data.get("auto_compulsory_summary", True)
+        credit_summary_override = data.get("credit_summary_override", "")
+        compulsory_summary_override = data.get("compulsory_summary_override", "")
         ost = cls(
             OST_date_of_issue=OST_date_of_issue,
             name=name,
@@ -299,6 +316,10 @@ class OST_info:
             diploma_or_certificate=diploma_or_certificate,
             diploma_or_certificate_date_of_issue=diploma_or_certificate_date_of_issue,
             authorization=authorization,
+            auto_credit_summary=auto_credit_summary,
+            auto_compulsory_summary=auto_compulsory_summary,
+            credit_summary_override=credit_summary_override,
+            compulsory_summary_override=compulsory_summary_override
         )
         ost._course_list = course_list
         ost._course_font_size = course_font_size
