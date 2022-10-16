@@ -5,9 +5,7 @@ Made for McCanny Secondary School, Dev by HongCheng Wei ([homeletwei@gmail.com](
 
 Currently, OST Helper only supports Windows Platform.
 
-To install OST Helper, download the latest installer from [here](https://github.com/Homelet/OST/blob/master/Release/V%201.1/OST%20Helper_v1.1_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
-
-You can also create [a desktop shortcut](#how-to-create-desktop-shortcut) and [a start menu shortcut](#how-to-create-start-menu-shortcut).
+To install OST Helper, download the latest installer from [here](https://github.com/Homelet/OST/blob/master/Release/V%201.2/OST%20Helper_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
 
 See the previous Release of OST Helper, check [here](Release).
 
@@ -15,10 +13,10 @@ See the previous Release of OST Helper, check [here](Release).
 OST Helper is a program that helps to create and modify the Ontario Student Transcript (OST) easily. 
 
 ### Features
-- OST Helper saves each OST as an [json file](https://en.wikipedia.org/wiki/JSON) (basically a text file), which makes storing and transporting OST easily (takes less space).
+- OST Helper saves each OST as an [json file](https://en.wikipedia.org/wiki/JSON), which makes storing and transporting OST easily (takes less space).
 - Users can choose to export the OST to PDF either with a template in the background (good for backup), or without a template in the background (good for print).
 - The `Smart Fill` and `Train` feature helps quickly add Course to the OST, check out [Smart Fill and Train](#smart-fill-and-train).
-- The `Preview` feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#using-adjustment).
+- The `Preview` feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#adjusting-the-ost-layout).
 - Production Tool helps to create OST in batches, more detail in production tools, check out [Production Tool](#using-production-tool).
 
 ## Get Started
@@ -90,16 +88,14 @@ When `Smart Fill` is triggered, the program will look for the Course Code (not c
 ![Smart Fill Demo](asset/smart_fill_demo.gif)
 
 ### Train
-Train is the twin feature of Smart Fill. The purpose of Train is to build `CCCL` (Common Course Code Library). CCCL is a place where all _valid_ Course you have inputted saves. Compare to Smart Fill, the activation of `Train` is entirely passive (You can tell that a `Train` cycle is performed in the status bar). Here is when will Train will perform:
-- When you lost focus of the Course panel.
-- Before exiting OST Helper.
+When you save an OST json, OST Helper will remember the courses that were entered and save it in CCCL. The smart fill feature will then use the CCCL. 
 
 CCCL (Common Course Code Library) only saves the _valid_ Course that you inputted. A _valid_ course must have `Course Code` and `Level` and `Title` and `Credit`, that means the corresponding field must not empty at the time a training cycle performs.
 
 CCCL is saved to `resource/CCCL.json`.
 
-## Using Adjustment
-Adjustment Window provides several functionalities to fine-tune the layout of the OST. 
+## Adjusting the OST Layout
+The preview Window provides several functionalities to fine-tune the layout of the OST. 
 - A preview of the OST.
     - Note that if the OST consists of several pages, the preview will only display the first page.
 - A slider that changes the `x offset`.
@@ -121,19 +117,3 @@ First, put all OST file you want to process in a Directory (referred to as `Prod
 > Every file in the Production Directory will be processed to generate an OST report (if possible) and saved to the Output Location with the default file name. If the file name already exists in Output Location, it won't be overwritten unless _Overwrite when necessary_ is checked.
 
 Default, if the PDF already exists in the Output Location, it will not be overwritten. To disable this behavior, check `Overwrite Output files when necessary`.
-
-## Frequent Asked Question
-
-### How to create Desktop Shortcut
-To create a desktop shortcut, follow the below instruction.
-
-Right-click on the program ➡Send to➡Desktop (Create Shortcut)
-
-![Desktop shortcut](asset/desktop_shortcut.png)
-
-### How to create Start menu Shortcut
-To create a Start menu shortcut, follow the below instruction.
-
-Right-click on the program ➡Pin to Start.
-
-![Start menu shortcut](asset/start_menu_shortcut.png)
