@@ -9,3 +9,6 @@ dist
 build
 
 .idea
+
+resource/CCCL.json
+resource/setting.json
