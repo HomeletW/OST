@@ -28,7 +28,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='OST Helper',
+    name='OST Helper 2',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

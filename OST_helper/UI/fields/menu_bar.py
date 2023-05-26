@@ -9,10 +9,12 @@ class MenuBar(tk.Menu):
         super().__init__(master)
         self.file_menu = None
         self.setting = None
+        # self.template = None
         self.tools = None
         self.help = None
         self.info_panel = info_panel
         # setting
+        # self.template_options = tk.StringVar(value=SETTING.get("template", "V2013"))
         self.draw_ost_template = tk.BooleanVar(
             value=SETTING["draw_ost_template"])
         self.smart_fill = tk.BooleanVar(value=SETTING["smart_fill"])
@@ -43,13 +45,18 @@ class MenuBar(tk.Menu):
         self.setting.add_command(label="Adjust...",
                                  command=self.info_panel.adjust_action)
         self.setting.add_separator()
-        self.setting.add_checkbutton(label="Smart fill",
+        self.setting.add_checkbutton(label="Autofill",
                                      variable=self.smart_fill,
                                      command=self.toggle_smart_fill)
-        self.setting.add_checkbutton(label="Train",
+        self.setting.add_checkbutton(label="Autofill Train",
                                      variable=self.train,
                                      command=self.toggle_train)
         self.add_cascade(label="Setting", menu=self.setting)
+
+        # self.template = tk.Menu(self, tearoff=0)
+        # self.template.add_radiobutton(label="V2013", value="V2013", variable=self.template_options)
+        # self.template.add_radiobutton(label="V2022", value="V2022", variable=self.template_options)
+        # self.add_cascade(label="Template", menu=self.template)
 
         self.tools = tk.Menu(self, tearoff=0)
         self.tools.add_command(label="Production Tool",
@@ -79,11 +86,11 @@ class MenuBar(tk.Menu):
         smart_fill = self.smart_fill.get()
         SETTING["smart_fill"] = smart_fill
         self.info_panel.status_bar.set(
-            "Smart fill has been set to {}".format(
+            "Autofill has been set to {}".format(
                 "ON" if smart_fill else "OFF"))
 
     def toggle_train(self):
         train = self.train.get()
         SETTING["train"] = train
         self.info_panel.status_bar.set(
-            "Train has been set to {}".format("ON" if train else "OFF"))
+            "Autofill Train has been set to {}".format("ON" if train else "OFF"))

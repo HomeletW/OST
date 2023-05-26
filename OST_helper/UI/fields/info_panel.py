@@ -149,6 +149,8 @@ class OtherInfoPanel(tk.LabelFrame):
         self.community_involvement = None
         self.literacy_requirement_var = None
         self.literacy_requirement = None
+        self.online_learning_requirement_var = None
+        self.online_learning_requirement = None
         self.specialized_program = None
         self.diploma_or_certificate = None
         self.diploma_or_certificate_date_of_issue = None
@@ -157,7 +159,7 @@ class OtherInfoPanel(tk.LabelFrame):
 
     def add_items(self):
         divided = self.size_config.divide([
-            [1, 2, 3, 5],
+            [1, 1.8, 2.1, 2.1, 4],
             [1, 5, 1, 4],
         ], height_offset=20, width_offset=4, internal=False)
         self.community_involvement_var = tk.BooleanVar()
@@ -170,11 +172,16 @@ class OtherInfoPanel(tk.LabelFrame):
             self,
             text="Provincial Literacy Requirement",
             variable=self.literacy_requirement_var)
+        self.online_learning_requirement_var = tk.BooleanVar()
+        self.online_learning_requirement = tk.Checkbutton(
+            self,
+            text="Online Learning Requirement",
+            variable=self.online_learning_requirement_var)
         self.specialized_program = LabelEntryPair(
             self,
             "Specialized Program",
             "",
-            divided[0][2])
+            divided[0][3])
         self.diploma_or_certificate = LabelEntryPair(
             self,
             "Diploma or Certificate",
@@ -194,7 +201,7 @@ class OtherInfoPanel(tk.LabelFrame):
         )
         self.size_config.place([
             [self.community_involvement, self.literacy_requirement,
-             self.specialized_program],
+             self.online_learning_requirement, self.specialized_program],
             [self.diploma_or_certificate,
              self.diploma_or_certificate_date_of_issue, self.authorization],
         ])
@@ -203,6 +210,8 @@ class OtherInfoPanel(tk.LabelFrame):
         community_involvement = data["community_involvement_flag"]
         literacy_requirement = data[
             "provincial_secondary_school_literacy_requirement_flag"]
+        online_learning_requirement = data[
+            "secondary_school_online_learning_requirement_flag"]
         specialized_program = data["specialized_program"]
         diploma_or_certificate = data["diploma_or_certificate"]
         diploma_or_certificate_date_of_issue = data[
@@ -210,6 +219,7 @@ class OtherInfoPanel(tk.LabelFrame):
         authorization = data["authorization"]
         self.community_involvement_var.set(community_involvement)
         self.literacy_requirement_var.set(literacy_requirement)
+        self.online_learning_requirement_var.set(online_learning_requirement)
         self.specialized_program.set(specialized_program)
         self.diploma_or_certificate.set(diploma_or_certificate)
         self.diploma_or_certificate_date_of_issue.set(
@@ -219,15 +229,15 @@ class OtherInfoPanel(tk.LabelFrame):
     def get(self, data):
         community_involvement = self.community_involvement_var.get()
         literacy_requirement = self.literacy_requirement_var.get()
+        online_learning_requirement = self.online_learning_requirement_var.get()
         specialized_program = self.specialized_program.get()
         diploma_or_certificate = self.diploma_or_certificate.get()
         diploma_or_certificate_date_of_issue = self.diploma_or_certificate_date_of_issue.get()
         authorization = self.authorization.get()
         data["community_involvement_flag"] = community_involvement
-        data[
-            "provincial_secondary_school_literacy_requirement_flag"] = literacy_requirement
+        data["provincial_secondary_school_literacy_requirement_flag"] = literacy_requirement
+        data["secondary_school_online_learning_requirement_flag"] = online_learning_requirement
         data["specialized_program"] = specialized_program
         data["diploma_or_certificate"] = diploma_or_certificate
-        data[
-            "diploma_or_certificate_date_of_issue"] = diploma_or_certificate_date_of_issue
+        data["diploma_or_certificate_date_of_issue"] = diploma_or_certificate_date_of_issue
         data["authorization"] = authorization

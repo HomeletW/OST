@@ -12,7 +12,9 @@ flag_right = 2
 checkMark = Image.open("./resource/checkMark.png")
 
 
-def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
+def draw(info: Data.OST_info,
+         draw_ost_template,
+         offset=COORDINATES["Offset"],
          font=TFONT):
     course_images = draw_courses(courses=info.course(), font=font,
                                  font_size=info.course_font_size(),
@@ -221,6 +223,15 @@ def draw(info: Data.OST_info, draw_ost_template, offset=COORDINATES["Offset"],
         else:
             draw_image(img, checkMark,
                        COORDINATES["ProvincialSecondarySchoolLiteracy_False"],
+                       offset=offset)
+        # draw secondary school online learning requirement
+        if info.secondary_school_online_learning_requirement():
+            draw_image(img, checkMark,
+                       COORDINATES["SecondarySchoolOnlineLearningRequirements_True"],
+                       offset=offset)
+        else:
+            draw_image(img, checkMark,
+                       COORDINATES["SecondarySchoolOnlineLearningRequirements_False"],
                        offset=offset)
         # save the image
         image_name = info.get_file_name(

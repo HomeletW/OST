@@ -12,7 +12,7 @@ from PIL import Image
 logging.basicConfig(
     style="{",
     format="{threadName:<10s} <{levelname:<7s}> [{asctime:<15s}] {message}",
-    level=logging.DEBUG
+    level=logging.INFO
 )
 
 
@@ -115,6 +115,7 @@ default_ost = {
     "date_of_entry": ["", "", ""],
     "community_involvement_flag": False,
     "provincial_secondary_school_literacy_requirement_flag": False,
+    "secondary_school_online_learning_requirement_flag": False,
     "specialized_program": "",
     "diploma_or_certificate": "Ontario Secondary School Diploma",
     "diploma_or_certificate_date_of_issue": ["", ""],

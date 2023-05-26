@@ -1,42 +1,247 @@
 {
-    "Size": [3300, 2532],
-    "Offset": [0, 0],
-    "OST_DateOfIssue": [2301, 73, 532, 85, 55],
-    "Page_1": [2826, 73, 183, 85, 50],
-    "Page_2": [3046, 73, 183, 85, 50],
-    "Surname": [85, 204, 645, 94, 50],
-    "GivenName": [730, 204, 772, 94, 50],
-    "OEN": [1502, 204, 537, 94, 50],
-    "StudentNumber": [2039, 204, 538, 94, 50],
-    "Gender": [2577, 204, 136, 94, 50],
-    "DateOfBirth_Y": [2713, 228, 202, 70, 40],
-    "DateOfBirth_M": [2915, 228, 202, 70, 40],
-    "DateOfBirth_D": [3117, 228, 147, 70, 40],
-    "NameOfDSB": [85, 336, 1023, 100, 50],
-    "NumberOfDSB": [1108, 338, 397, 100, 50],
-    "NameOfSchool": [1505, 338, 807, 100, 50],
-    "NumberOfSchool": [2311, 338, 402, 100, 50],
-    "DateOfEntry_Y": [2713, 368, 202, 70, 40],
-    "DateOfEntry_M": [2915, 368, 202, 70, 40],
-    "DateOfEntry_D": [3117, 368, 147, 70, 40],
-    "Course": [35, 564, 3230, 1419],
-    "Course_date_offset": [0, 268],
-    "Course_level_offset": [271, 183],
-    "Course_title_offset": [456, 1637],
-    "Course_code_offset": [2096, 244],
-    "Course_percentage_offset": [2343, 175],
-    "Course_credit_offset": [2528, 183],
-    "Course_compulsory_offset": [2713, 207],
-    "Course_note_offset": [2930, 299],
-    "SummaryOfCredit": [2562, 1992, 184, 69, 55],
-    "SummaryOfCompulsory": [2748, 1992, 207, 69, 55],
-    "CommunityInvolvement_True": [75, 2125],
-    "CommunityInvolvement_False": [385, 2125],
-    "ProvincialSecondarySchoolLiteracy_True": [623, 2125],
-    "ProvincialSecondarySchoolLiteracy_False": [1173, 2125],
-    "SpecializedProgram": [1436, 2104, 1828, 96, 40],
-    "DiplomaOrCertificate": [77, 2240, 1622, 90, 40],
-    "DiplomaOrCertificate_DateOfIssue_Y": [1702, 2273, 180, 57, 40],
-    "DiplomaOrCertificate_DateOfIssue_M": [1885, 2273, 180, 57, 40],
-    "Authorization": [2070, 2240, 1148, 90, 40]
+    "Size": [
+        3300,
+        2532
+    ],
+    "Offset": [
+        0,
+        0
+    ],
+    "OST_DateOfIssue": [
+        2301,
+        73,
+        532,
+        85,
+        55
+    ],
+    "Page_1": [
+        2826,
+        73,
+        183,
+        85,
+        50
+    ],
+    "Page_2": [
+        3046,
+        73,
+        183,
+        85,
+        50
+    ],
+    "Surname": [
+        85,
+        204,
+        645,
+        94,
+        50
+    ],
+    "GivenName": [
+        730,
+        204,
+        772,
+        94,
+        50
+    ],
+    "OEN": [
+        1502,
+        204,
+        537,
+        94,
+        50
+    ],
+    "StudentNumber": [
+        2039,
+        204,
+        538,
+        94,
+        50
+    ],
+    "Gender": [
+        2577,
+        204,
+        136,
+        94,
+        50
+    ],
+    "DateOfBirth_Y": [
+        2713,
+        228,
+        202,
+        70,
+        40
+    ],
+    "DateOfBirth_M": [
+        2915,
+        228,
+        202,
+        70,
+        40
+    ],
+    "DateOfBirth_D": [
+        3117,
+        228,
+        147,
+        70,
+        40
+    ],
+    "NameOfDSB": [
+        85,
+        336,
+        1023,
+        100,
+        50
+    ],
+    "NumberOfDSB": [
+        1108,
+        338,
+        397,
+        100,
+        50
+    ],
+    "NameOfSchool": [
+        1505,
+        338,
+        807,
+        100,
+        50
+    ],
+    "NumberOfSchool": [
+        2311,
+        338,
+        402,
+        100,
+        50
+    ],
+    "DateOfEntry_Y": [
+        2713,
+        368,
+        202,
+        70,
+        40
+    ],
+    "DateOfEntry_M": [
+        2915,
+        368,
+        202,
+        70,
+        40
+    ],
+    "DateOfEntry_D": [
+        3117,
+        368,
+        147,
+        70,
+        40
+    ],
+    "Course": [
+        35,
+        564,
+        3230,
+        1419
+    ],
+    "Course_date_offset": [
+        0,
+        268
+    ],
+    "Course_level_offset": [
+        271,
+        183
+    ],
+    "Course_title_offset": [
+        456,
+        1637
+    ],
+    "Course_code_offset": [
+        2096,
+        244
+    ],
+    "Course_percentage_offset": [
+        2343,
+        175
+    ],
+    "Course_credit_offset": [
+        2528,
+        183
+    ],
+    "Course_compulsory_offset": [
+        2713,
+        207
+    ],
+    "Course_note_offset": [
+        2930,
+        299
+    ],
+    "SummaryOfCredit": [
+        2562,
+        1992,
+        184,
+        69,
+        55
+    ],
+    "SummaryOfCompulsory": [
+        2748,
+        1992,
+        207,
+        69,
+        55
+    ],
+    "CommunityInvolvement_True": [
+        75,
+        2125
+    ],
+    "CommunityInvolvement_False": [
+        369,
+        2125
+    ],
+    "ProvincialSecondarySchoolLiteracy_True": [
+        545,
+        2125
+    ],
+    "ProvincialSecondarySchoolLiteracy_False": [
+        1015,
+        2125
+    ],
+    "SecondarySchoolOnlineLearningRequirements_True": [
+        1273,
+        2125
+    ],
+    "SecondarySchoolOnlineLearningRequirements_False": [
+        1743,
+        2125
+    ],
+    "SpecializedProgram": [
+        1913,
+        2104,
+        1352,
+        96,
+        40
+    ],
+    "DiplomaOrCertificate": [
+        77,
+        2240,
+        1622,
+        90,
+        40
+    ],
+    "DiplomaOrCertificate_DateOfIssue_Y": [
+        1702,
+        2273,
+        180,
+        57,
+        40
+    ],
+    "DiplomaOrCertificate_DateOfIssue_M": [
+        1885,
+        2273,
+        180,
+        57,
+        40
+    ],
+    "Authorization": [
+        2070,
+        2240,
+        1148,
+        90,
+        40
+    ]
 }

@@ -1,8 +1,0 @@
-{
-    "draw_ost_template": true,
-    "smart_fill": true,
-    "train": true,
-    "json_dir": "/",
-    "img_dir": "/",
-    "last_session": null
-}

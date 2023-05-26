@@ -73,6 +73,7 @@ class OST_info:
                  date_of_entry=default_ost["date_of_entry"],
                  community_involvement_flag=default_ost["community_involvement_flag"],
                  provincial_secondary_school_literacy_requirement_flag=default_ost["provincial_secondary_school_literacy_requirement_flag"],
+                 secondary_school_online_learning_requirement_flag=default_ost["secondary_school_online_learning_requirement_flag"],
                  specialized_program=default_ost["specialized_program"],
                  diploma_or_certificate=default_ost["diploma_or_certificate"],
                  diploma_or_certificate_date_of_issue=default_ost["diploma_or_certificate_date_of_issue"],
@@ -99,6 +100,7 @@ class OST_info:
                                date_of_entry[2]]
         self._community_involvement_flag = community_involvement_flag
         self._provincial_secondary_school_literacy_requirement_flag = provincial_secondary_school_literacy_requirement_flag
+        self._secondary_school_online_learning_requirement_flag = secondary_school_online_learning_requirement_flag
         self._specialized_program = specialized_program
         self._diploma_or_certificate = diploma_or_certificate
         self._diploma_or_certificate_date_of_issue = [diploma_or_certificate_date_of_issue[0], diploma_or_certificate_date_of_issue[1]]
@@ -195,6 +197,9 @@ class OST_info:
     def provincial_secondary_school_literacy_requirement(self):
         return self._provincial_secondary_school_literacy_requirement_flag
 
+    def secondary_school_online_learning_requirement(self):
+        return self._secondary_school_online_learning_requirement_flag
+
     def specialized_program(self):
         return self._specialized_program
 
@@ -240,6 +245,7 @@ class OST_info:
                 "date_of_entry": self._date_of_entry,
                 "community_involvement_flag": self._community_involvement_flag,
                 "provincial_secondary_school_literacy_requirement_flag": self._provincial_secondary_school_literacy_requirement_flag,
+                "secondary_school_online_learning_requirement_flag": self._secondary_school_online_learning_requirement_flag,
                 "specialized_program": self._specialized_program,
                 "diploma_or_certificate": self._diploma_or_certificate,
                 "diploma_or_certificate_date_of_issue": self._diploma_or_certificate_date_of_issue,
@@ -283,6 +289,8 @@ class OST_info:
         community_involvement_flag = data["community_involvement_flag"]
         provincial_secondary_school_literacy_requirement_flag = data[
             "provincial_secondary_school_literacy_requirement_flag"]
+        secondary_school_online_learning_requirement_flag = data.get(
+            "secondary_school_online_learning_requirement_flag", False)   # new in v2.0
         specialized_program = data["specialized_program"]
         diploma_or_certificate = data["diploma_or_certificate"]
         diploma_or_certificate_date_of_issue = data[
@@ -312,6 +320,7 @@ class OST_info:
             date_of_entry=date_of_entry,
             community_involvement_flag=community_involvement_flag,
             provincial_secondary_school_literacy_requirement_flag=provincial_secondary_school_literacy_requirement_flag,
+            secondary_school_online_learning_requirement_flag=secondary_school_online_learning_requirement_flag,
             specialized_program=specialized_program,
             diploma_or_certificate=diploma_or_certificate,
             diploma_or_certificate_date_of_issue=diploma_or_certificate_date_of_issue,
