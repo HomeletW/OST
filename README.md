@@ -3,20 +3,18 @@ Made for McCanny Secondary School, Dev by HongCheng Wei ([homeletwei@gmail.com](
 
 ## Install OST Helper
 
-Currently, OST Helper only supports Windows Platform.
+OST Helper offically supports Windows Platform installer. Mac platform can run OST Helper through ternimal (installing packages in requirments.txt through pip and running the Launcher.py script with python3.X).
 
-To install OST Helper, download the latest installer from [here](https://github.com/Homelet/OST/blob/master/Release/V%201.2/OST%20Helper_installer.exe?raw=true), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
-
-See the previous Release of OST Helper, check [here](Release).
+To install OST Helper, download the latest installer from [here](https://github.com/HomeletW/OST/releases/latest), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
 
 ## Overview
 OST Helper is a program that helps to create and modify the Ontario Student Transcript (OST) easily. 
 
 ### Features
-- OST Helper saves each OST as an [json file](https://en.wikipedia.org/wiki/JSON), which makes storing and transporting OST easily (takes less space).
-- Users can choose to export the OST to PDF either with a template in the background (good for backup), or without a template in the background (good for print).
-- The `Smart Fill` and `Train` feature helps quickly add Course to the OST, check out [Smart Fill and Train](#smart-fill-and-train).
-- The `Preview` feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#adjusting-the-ost-layout).
+- OST Helper saves OST as an [json file](https://en.wikipedia.org/wiki/JSON), which makes storing and transporting OST easier.
+- Users can choose to export the OST to PDF either with a template in the background, or without a template in the background (for print).
+- The Autocomplete feature helps quickly add Course to the OST, check out [Autocomplete](#Autocomplete).
+- The Preview feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#adjusting-the-ost-layout).
 - Production Tool helps to create OST in batches, more detail in production tools, check out [Production Tool](#using-production-tool).
 
 ## Get Started
@@ -45,9 +43,8 @@ To add a course, press `+ ADD Course` button, and a course will appear at the en
 There are a handful of tips and tricks about adding Courses that can help speed up the process.
 - Up arrow, Down arrow, Left arrow, Right arrow moves the focus in their expected direction.
 - Press on the red `x` deletes that Course, pressing `Del` while you have focus does the same trick.
-- `Enter` and `Tab` also moves you to the next field. (`Enter` is preferred)
-- `Smart Fill` and `Train` feature helps to add Course quickly, detail about this feature, check out [Smart Fill and Train](#smart-fill-and-train).
-    - Note that the `Course Code` is the Entry of `Smart Fill`, pressing any key that causes you to move focus away from `Course Code` triggers `Smart Fill` (i.e., When you have a focus on `Course Code`, Up, Down, Left, Right, Enter, Tab triggers `Smart Fill`).
+- `Enter` and `Tab` also moves you to the next field.
+- `Autocomplete` feature helps to add Course quickly, detail about this feature, check out [Autocomplete](#Autocomplete).
 
 After Finnish filling the required field, save your work by pressing `Save` in the bottom bar or the `File` menu.
 
@@ -73,22 +70,21 @@ Other things to note of:
 1. To start a new draft, press `New` in the bottom bar or the `File` menu. This will save the current OST if the user has already saved this file before. Otherwise, it will ask the user to save to a location.
 1. To open an existing OST file, press `Open` in the bottom bar or the `File` menu. This will also save the current OST (the save behavior is identical to `New`).
 1. To drop all info and reset everything to the factory condition, press `Reset` in the `File` menu, Note that _*`Reset` will not ask you to save the current file*_, if you want to start a new file use `New`.
-1. The `Smart Fill` and `Train` feature can be turned off, toggle `Smart Fill` and `Train` in the `Setting` menu.
+1. The Autocomplete feature can be turned off, toggle Autocomplete menu.
 
-## Smart Fill and Train
-Smart Fill and Train is an assistant feature that helps users to add courses quickly. As the user spends more time with this program, this feature also becomes more and more helpful.
+## Autocomplete
+Autocomplete helps users to add courses quickly. As the user spends more time with OST Helper, autocomplete becomes more and more helpful.
 
-_Note that `Smart Fill` and `Train` feature can be turned off, toggle `Smart Fill` and `Train` in the `Setting` menu._
+_Note that Autocomplete feature can be turned off, toggle `Autocomplete` in the `Setting` menu._
 
-### Smart Fill
-To use smart fill, start typing a Course Code in `Course Code` field and then press _Up Arrow Key or Down Arrow Key or Left Arrow Key or Right Arrow Key or Enter Key or Tab Key_ all triggers Smart Fill (pressing any key that causes you lost focus from `Course Code` triggers `Smart Fill`, *Note that mouse click to other field doesn't trigger `Smart Fill`*) . 
+To use Autocomplete, start typing a Course Code in `Course Code` field and then press Enter Key to triggers Autocomplete.
 
-When `Smart Fill` is triggered, the program will look for the Course Code (not case sensitive) you just typed in the CCCL (Common Course Code Libary), if a reference is found, it will fill `Level`, `Title`, `Credit`, `Comp.` for you. (_Note that if any of `Level`, `Title`, `Credit`, `Comp.` already have value, Smart fill will not perform!_)
+When Autocomplete is triggered, the program will look for the Course Code you just typed in the CCCL (Common Course Code Libary), if a reference is found, it will fill `Level`, `Title`, `Credit`, `Comp.` for you.
 
 ![Smart Fill Demo](asset/smart_fill_demo.gif)
 
-### Train
-When you save an OST json, OST Helper will remember the courses that were entered and save it in CCCL. The smart fill feature will then use the CCCL. 
+### Common Cource Code Library (CCCL)
+When you save an OST json, OST Helper will remember the courses that were entered and save it in CCCL.
 
 CCCL (Common Course Code Library) only saves the _valid_ Course that you inputted. A _valid_ course must have `Course Code` and `Level` and `Title` and `Credit`, that means the corresponding field must not empty at the time a training cycle performs.
 

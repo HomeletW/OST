@@ -185,7 +185,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.cancel_button = tk.Button(self.sub_frame, text="Cancel",
                                        command=self.cancel)
         self.confirm_button = tk.Button(self.sub_frame, text="Confirm",
-                                        command=self.confirm)
+                                        command=self.confirm, fg="#CC0066")
         self.x_offset.set(self.x_offset_val)
         self.y_offset.set(self.y_offset_val)
         self.font_size.set(self.font_size_val)
@@ -417,7 +417,7 @@ class ThreadMonitorDialog(tk.Toplevel, Tracker):
             master=self,
             orient=tk.HORIZONTAL,
             mode="determinate")
-        self.ok = tk.Button(master=self, text="Working...", command=self.exit)
+        self.ok = tk.Button(master=self, text="Working...", command=self.exit, fg="#CC0066")
         self.ok.config(state=tk.DISABLED)
         self.size_config.place([
             [self.detail],
@@ -661,7 +661,7 @@ class ProductionDialog(tk.Toplevel):
             anchor=tk.W)
         self.start_button = tk.Button(
             self.main_frame, text="Start Production",
-            command=self.start_production)
+            command=self.start_production, fg="#CC0066")
         self.cancel_button = tk.Button(
             self.main_frame, text="Cancel",
             command=self.cancel)
