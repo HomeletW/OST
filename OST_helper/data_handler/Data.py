@@ -29,6 +29,9 @@ class Course:
         self.credit = credit
         self.compulsory = compulsory
         self.note = note
+        
+    def get(self):
+        return self.date, self.level, self.title, self.code, self.percentage, self.credit, self.compulsory, self.note
 
     def is_course(self):
         return self.code != ""

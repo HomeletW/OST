@@ -300,7 +300,7 @@ class AdjustmentWindow(tk.Toplevel):
         img = img[0][0]
         c_width, c_height = self.canvas_size
         self.image = ImageTk.PhotoImage(
-            image=img.resize((c_width, c_height), Image.ANTIALIAS))
+            image=img.resize((c_width, c_height), Image.Resampling.LANCZOS))
         self.canvas.delete("all")
         # self.canvas.create_rectangle((0, 0, 3300 // 5, 2550 // 5), fill="white")
         self.canvas.create_image(0, 0, anchor="nw", image=self.image)

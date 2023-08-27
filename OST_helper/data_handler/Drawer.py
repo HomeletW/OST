@@ -314,7 +314,8 @@ def draw_text(drawer, text, config, font, offset, alignment_flag=flag_left):
     font = ImageFont.truetype(font, size=font_size) if isinstance(font,
                                                                   str) else font
     # determine how long the text is going to be and apply the alignment flag
-    width, height = drawer.textsize(text=text, font=font, spacing=0)
+    left, top, right, bottom = drawer.textbbox((0,0), text, font=font)
+    width, height = right, bottom
     if alignment_flag == flag_right:
         x = x + box_width - width
     elif alignment_flag == flag_center:
@@ -354,15 +355,8 @@ def draw_courses(courses, font, font_size, spacing):
 
     def get_height(course):
         # get the maximum height in line
-        return max(font.getsize(course.date)[1],
-                   font.getsize(course.level)[1],
-                   font.getsize(course.title)[1],
-                   font.getsize(course.code)[1],
-                   font.getsize(course.percentage)[1],
-                   font.getsize(course.credit)[1],
-                   font.getsize(course.compulsory)[1],
-                   font.getsize(course.note)[1],
-                   )
+        left, top, right, bot = font.getbbox(" ".join(course.get()))
+        return bot
 
     def draw_course(drawer, course: Course, height, y):
         # draw date
