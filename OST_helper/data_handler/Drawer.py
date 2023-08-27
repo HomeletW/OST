@@ -1,6 +1,9 @@
 from PIL import ImageDraw, ImageFont
 
-from OST_helper.data_handler import Data
+from OST_helper.data_handler import Course, OST_info, \
+    SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_TRUE_TEXT, \
+    SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_FALSE_TEXT, \
+    SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_TITLE
 from OST_helper.parameter import *
 
 # alignment flag
@@ -8,12 +11,12 @@ flag_left = 0
 flag_center = 1
 flag_right = 2
 
-# checkMark
-checkMark = Image.open("./resource/checkMark.png")
+WHITE_TRANSPARENT = (0, 0, 0, 0)
+BLACK = (255, 255, 255, 255)
 
-
-def draw(info: Data.OST_info,
+def draw(info: OST_info,
          draw_ost_template,
+         draw_with_old_paper,
          offset=COORDINATES["Offset"],
          font=TFONT):
     course_images = draw_courses(courses=info.course(), font=font,
@@ -24,10 +27,10 @@ def draw(info: Data.OST_info,
     for page_index in range(total_page):
         image = course_images[page_index]
         img = Image.new(mode="RGBA", size=COORDINATES["Size"],
-                        color=(0, 0, 0, 0))
+                        color=WHITE_TRANSPARENT)
         drawer = ImageDraw.Draw(img)
         if draw_ost_template:
-            template = OST_SAMPLE_IMAGE.copy()
+            template = OST_SAMPLE_IMAGE.copy() if draw_with_old_paper else OST_SAMPLE_2023_IMAGE.copy()
             draw_image(img, template, config=(0, 0), offset=(0, 0))
         # draw the courses
         course_x, course_y, _, _ = COORDINATES["Course"]
@@ -208,31 +211,69 @@ def draw(info: Data.OST_info,
                   font=font,
                   offset=authorization_offset,
                   alignment_flag=flag_left)
-        # draw community involvement
-        if info.community_involvement():
-            draw_image(img, checkMark, COORDINATES["CommunityInvolvement_True"],
-                       offset=offset)
+        if draw_with_old_paper:
+            # draw community involvement
+            draw_checkmark(img, condition=info.community_involvement(), 
+                    true_config=COORDINATES["CommunityInvolvement_True_2023_oldversionpaper"], 
+                    false_config=COORDINATES["CommunityInvolvement_False_2023_oldversionpaper"], 
+                    offset=offset)
+            # draw provincial secondary school literacy requirement
+            draw_checkmark(img, condition=info.provincial_secondary_school_literacy_requirement(), 
+                    true_config=COORDINATES["ProvincialSecondarySchoolLiteracy_True_2023_oldversionpaper"], 
+                    false_config=COORDINATES["ProvincialSecondarySchoolLiteracy_False_2023_oldversionpaper"], 
+                    offset=offset)
+            # draw secondary school online learning requirement
+            draw_checkmark(img, condition=info.secondary_school_online_learning_requirement(), 
+                    true_config=COORDINATES["SecondarySchoolOnlineLearningRequirements_True_2023_oldversionpaper"], 
+                    false_config=COORDINATES["SecondarySchoolOnlineLearningRequirements_False_2023_oldversionpaper"], 
+                    offset=offset)
+            # draw secondary school online learning requirement divider
+            draw_line(drawer=drawer, 
+                    config=COORDINATES["SecondarySchoolOnlineLearningRequirements_Divider_2023_oldversionpaper"],
+                    offset=offset)
+            # draw secondary school online learning requirement title
+            draw_text(drawer=drawer,
+                    text=SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_TITLE,
+                    config=COORDINATES["SecondarySchoolOnlineLearningRequirements_Title_2023_oldversionpaper"],
+                    font=font,
+                    offset=offset,
+                    alignment_flag=flag_left)
+            # draw secondary school online learning requirement box
+            draw_box(drawer, 
+                    config=COORDINATES["SecondarySchoolOnlineLearningRequirements_TrueBox_2023_oldversionpaper"],
+                    offset=offset)
+            draw_box(drawer, 
+                    config=COORDINATES["SecondarySchoolOnlineLearningRequirements_FalseBox_2023_oldversionpaper"],
+                    offset=offset)
+            # draw secondary school online learning requirement boxText    
+            draw_text(drawer=drawer,
+                    text=SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_TRUE_TEXT,
+                    config=COORDINATES["SecondarySchoolOnlineLearningRequirements_TrueText_2023_oldversionpaper"],
+                    font=font,
+                    offset=offset,
+                    alignment_flag=flag_left)  
+            draw_text(drawer=drawer,
+                    text=SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_FALSE_TEXT,
+                    config=COORDINATES["SecondarySchoolOnlineLearningRequirements_FalseText_2023_oldversionpaper"],
+                    font=font,
+                    offset=offset,
+                    alignment_flag=flag_left)
         else:
-            draw_image(img, checkMark,
-                       COORDINATES["CommunityInvolvement_False"], offset=offset)
-        # draw provincial secondary school literacy requirement
-        if info.provincial_secondary_school_literacy_requirement():
-            draw_image(img, checkMark,
-                       COORDINATES["ProvincialSecondarySchoolLiteracy_True"],
-                       offset=offset)
-        else:
-            draw_image(img, checkMark,
-                       COORDINATES["ProvincialSecondarySchoolLiteracy_False"],
-                       offset=offset)
-        # draw secondary school online learning requirement
-        if info.secondary_school_online_learning_requirement():
-            draw_image(img, checkMark,
-                       COORDINATES["SecondarySchoolOnlineLearningRequirements_True"],
-                       offset=offset)
-        else:
-            draw_image(img, checkMark,
-                       COORDINATES["SecondarySchoolOnlineLearningRequirements_False"],
-                       offset=offset)
+            # draw community involvement
+            draw_checkmark(img, condition=info.community_involvement(), 
+                    true_config=COORDINATES["CommunityInvolvement_True_2023"], 
+                    false_config=COORDINATES["CommunityInvolvement_False_2023"], 
+                    offset=offset)
+            # draw provincial secondary school literacy requirement
+            draw_checkmark(img, condition=info.provincial_secondary_school_literacy_requirement(), 
+                    true_config=COORDINATES["ProvincialSecondarySchoolLiteracy_True_2023"], 
+                    false_config=COORDINATES["ProvincialSecondarySchoolLiteracy_False_2023"], 
+                    offset=offset)
+            # draw secondary school online learning requirement
+            draw_checkmark(img, condition=info.secondary_school_online_learning_requirement(), 
+                    true_config=COORDINATES["SecondarySchoolOnlineLearningRequirements_True_2023"], 
+                    false_config=COORDINATES["SecondarySchoolOnlineLearningRequirements_False_2023"], 
+                    offset=offset)
         # save the image
         image_name = info.get_file_name(
             sub=str(page_index + 1) if total_page > 1 else "",
@@ -240,6 +281,29 @@ def draw(info: Data.OST_info,
         )
         images.append((img, image_name))
     return images, info.get_file_name()
+
+
+def draw_checkmark(img, condition, true_config, false_config, offset):
+    if condition:
+        draw_image(img, OST_CHECKMARK_IMAGE, true_config, offset=offset)
+    else:
+        draw_image(img, OST_CHECKMARK_IMAGE, false_config, offset=offset)
+
+
+def draw_box(drawer, config, offset):
+    offset_x, offset_y = offset
+    box_x, box_y, box_width, box_height, line_width = config
+    x, y = box_x + offset_x, box_y + offset_y
+    drawer.rectangle(xy=(x, y, x + box_width, y + box_height),
+                     outline="black", width=line_width)
+
+
+def draw_line(drawer, config, offset):
+    offset_x, offset_y = offset
+    x1, y1, x2, y2, line_width = config
+    drawer.line(xy=(x1 + offset_x, y1 + offset_y, x2 + offset_x, y2 + offset_y), 
+                fill="black", 
+                width=line_width)
 
 
 def draw_text(drawer, text, config, font, offset, alignment_flag=flag_left):
@@ -251,9 +315,9 @@ def draw_text(drawer, text, config, font, offset, alignment_flag=flag_left):
                                                                   str) else font
     # determine how long the text is going to be and apply the alignment flag
     width, height = drawer.textsize(text=text, font=font, spacing=0)
-    if alignment_flag is flag_right:
+    if alignment_flag == flag_right:
         x = x + box_width - width
-    elif alignment_flag is flag_center:
+    elif alignment_flag == flag_center:
         x = x + box_width / 2 - width / 2
     else:
         x = x
@@ -284,7 +348,7 @@ def draw_courses(courses, font, font_size, spacing):
     # draw the courses on a new image
     # to make sure there are at least one image
     img = Image.new(mode="RGBA", size=(course_width, course_height),
-                    color=(0, 0, 0, 0))
+                    color=WHITE_TRANSPARENT)
     img_drawer = ImageDraw.Draw(img)
     images = [img]
 
@@ -300,7 +364,7 @@ def draw_courses(courses, font, font_size, spacing):
                    font.getsize(course.note)[1],
                    )
 
-    def draw_course(drawer, course: Data.Course, height, y):
+    def draw_course(drawer, course: Course, height, y):
         # draw date
         draw_text(drawer=drawer,
                   text=course.date,

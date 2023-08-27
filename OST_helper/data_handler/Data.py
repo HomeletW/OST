@@ -1,6 +1,11 @@
 from OST_helper.parameter import *
 
 
+SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_TITLE = "Secondary School Online Learning Requirement"
+SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_TRUE_TEXT = "Successfully Completed"
+SECONDARY_SCHOOL_ONLINE_LEARNING_REQUIREMENT_FALSE_TEXT = "N/A"
+
+
 class Course:
     """
     Each course object represent a course in the OST

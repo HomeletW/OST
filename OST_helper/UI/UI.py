@@ -148,7 +148,9 @@ class InfoFrame(tk.Frame):
         data["course_spacing"] = self.adjustment.spacing_val
         return Data.OST_info.from_data(data)
 
-    def production(self, ost_file, pdf_dir, draw_ost_template,
+    def production(self, ost_file, pdf_dir, 
+                   draw_ost_template, 
+                   draw_use_old_version_paper,
                    overwrite_output):
         try:
             ost = OST_info.from_json(ost_file)
@@ -158,6 +160,7 @@ class InfoFrame(tk.Frame):
                 return PRODUCTION_FILE_EXISTS
             self._generate_action(EMPTY_TRACKER, ost, pdf_path,
                                   draw_ost_template=draw_ost_template,
+                                  draw_use_old_version_paper=draw_use_old_version_paper,
                                   open_file=False)
             return PRODUCTION_SUCCESS
         except Exception:
@@ -192,13 +195,18 @@ class InfoFrame(tk.Frame):
                          ost,
                          pdf_path,
                          draw_ost_template=None,
+                         draw_with_old_paper=None,
                          open_file=True) -> bool:
         # ask the directory for pdf file save
         progress_dialog.init(4)
         progress_dialog.tick("➜ Drawing OST")
         if draw_ost_template is None:
             draw_ost_template = SETTING["draw_ost_template"]
-        images, _ = Drawer.draw(ost, draw_ost_template,
+        if draw_with_old_paper is None:
+            draw_with_old_paper = SETTING.get("draw_use_old_version_paper", True)
+        images, _ = Drawer.draw(ost, 
+                                draw_ost_template=draw_ost_template,
+                                draw_with_old_paper=draw_with_old_paper,
                                 offset=COORDINATES["Offset"])
         progress_dialog.tick("➜ Creating PDF file")
         pdf_dir = dirname(pdf_path)
@@ -222,7 +230,6 @@ class InfoFrame(tk.Frame):
             progress_dialog.end(error=True)
             return False
         progress_dialog.tick("➜ PDF saved!")
-        progress_dialog.tick("➜ Finished!")
         progress_dialog.end()
         progress_dialog.log("✔ PDF Saved to : {}".format(pdf_path))
         self.status_bar.set("PDF saved to : {}!".format(pdf_path))
@@ -339,15 +346,14 @@ class InfoFrame(tk.Frame):
     def about_action(self):
         tk.messagebox.showinfo(
             parent=self.tk_frame, title="About",
-
-            message="This software is Made for McCanny Secondary School, "
-                    "Dev by HongCheng Wei (homeletwei@gmail.com).\n\n"
-                    "Version : V {}\n\n"
-                    "Copyright 2020 HongCheng Wei. All rights reserved.".format(PATCH)
+            message="OST Helper\n\n"
+                    "Developed by HongCheng Wei (github.com/HomeletW)\n\n"
+                    "Version : V{}\n\n"
+                    "Copyright © HongCheng Wei".format(PATCH)
         )
 
     def adjust_action(self):
-        self.adjustment.show(self.get_ost())
+        self.adjustment.show(self.get_ost(), SETTING.get("draw_use_old_version_paper", True))
 
 
 if __name__ == '__main__':

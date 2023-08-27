@@ -190,29 +190,111 @@
         2125
     ],
     "CommunityInvolvement_False": [
-        369,
+        385,
         2125
     ],
     "ProvincialSecondarySchoolLiteracy_True": [
-        545,
+        623,
         2125
     ],
     "ProvincialSecondarySchoolLiteracy_False": [
+        1173,
+        2125
+    ],
+    "CommunityInvolvement_True_2023": [
+        75,
+        2125
+    ],
+    "CommunityInvolvement_False_2023": [
+        369,
+        2125
+    ],
+    "ProvincialSecondarySchoolLiteracy_True_2023": [
+        545,
+        2125
+    ],
+    "ProvincialSecondarySchoolLiteracy_False_2023": [
         1015,
         2125
     ],
-    "SecondarySchoolOnlineLearningRequirements_True": [
+    "SecondarySchoolOnlineLearningRequirements_True_2023": [
         1273,
         2125
     ],
-    "SecondarySchoolOnlineLearningRequirements_False": [
+    "SecondarySchoolOnlineLearningRequirements_False_2023": [
         1743,
         2125
     ],
+    "CommunityInvolvement_True_2023_oldversionpaper": [
+        75,
+        2125
+    ],
+    "CommunityInvolvement_False_2023_oldversionpaper": [
+        385,
+        2125
+    ],
+    "ProvincialSecondarySchoolLiteracy_True_2023_oldversionpaper": [
+        623,
+        2125
+    ],
+    "ProvincialSecondarySchoolLiteracy_False_2023_oldversionpaper": [
+        1173,
+        2125
+    ],
+    "SecondarySchoolOnlineLearningRequirements_True_2023_oldversionpaper": [
+        2260,
+        2125
+    ],
+    "SecondarySchoolOnlineLearningRequirements_False_2023_oldversionpaper": [
+        2795,
+        2125
+    ],
+    "SecondarySchoolOnlineLearningRequirements_Divider_2023_oldversionpaper": [
+        2230,
+        2069,
+        2230,
+        2204,
+        3
+    ],
+    "SecondarySchoolOnlineLearningRequirements_Title_2023_oldversionpaper": [
+        2250,
+        2069,
+        1014,
+        40,
+        30
+    ],
+    "SecondarySchoolOnlineLearningRequirements_TrueBox_2023_oldversionpaper": [
+        2260,
+        2125,
+        63,
+        63,
+        2
+    ],
+    "SecondarySchoolOnlineLearningRequirements_FalseBox_2023_oldversionpaper": [
+        2795,
+        2125,
+        63,
+        63,
+        2
+    ],
+    "SecondarySchoolOnlineLearningRequirements_TrueText_2023_oldversionpaper": [
+        2335,
+        2125,
+        450,
+        63,
+        35
+    ],
+    "SecondarySchoolOnlineLearningRequirements_FalseText_2023_oldversionpaper": [
+        2870,
+        2125,
+        395,
+        63,
+        35
+    ],
     "SpecializedProgram": [
-        1913,
+        1436,
         2104,
-        1352,
+        1828,
         96,
         40
     ],
