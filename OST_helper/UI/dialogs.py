@@ -24,6 +24,7 @@ class AutoValueWindow(tk.Toplevel):
         super().__init__(master=master, width=width, height=height)
         self.wm_title(f"Set {value_name}")
         self.wm_iconbitmap(APP_LOGO)
+        self.transient(master)
         self.course_panel = course_panel
         self.resizable(False, False)
         self.value_name = value_name
@@ -69,7 +70,16 @@ class AutoValueWindow(tk.Toplevel):
             [self.cancel_button, self.confirm_button],
         ])
         self.use_auto_var.set(self.use_auto)   # trigger trace
-
+        
+    def set(self, use_auto, override_text):
+        self.use_auto = use_auto
+        self.override_text = override_text
+        self.use_auto_var.set(use_auto)
+        self.override_entry.set(override_text)
+        
+    def get(self):
+        return self.use_auto, self.override_text
+        
     def sync_use_auto(self, *args):
         if self.use_auto_var.get():
             self.override_entry.disable()
@@ -91,6 +101,7 @@ class AutoValueWindow(tk.Toplevel):
         self.wm_geometry("+{}+{}".format(x, y))
         self.update()
         self.deiconify()
+        self.focus_set()
         self.grab_set()
         # self.wait_visibility()
 
@@ -128,6 +139,7 @@ class AdjustmentWindow(tk.Toplevel):
         super().__init__(master=master, width=c_width, height=c_height + 250)
         self.wm_title("Adjustment")
         self.wm_iconbitmap(APP_LOGO)
+        self.transient(master)
         self.info_frame = info_frame
         self.resizable(False, False)
         self.canvas = None
