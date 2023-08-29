@@ -92,7 +92,7 @@ class InfoFrame(tk.Frame):
         self.utility_panel = UtilityPanel(
             self, size_config=divided[3][0])
         self.status_bar = StatusBar(
-            self, message="Welcome to OST Entry system!",
+            self, message="Welcome to OST Entry system",
             size_config=divided[4][0])
         self.tk_frame.config(menu=self.menubar)
         x_offset, y_offset = COORDINATES["Offset"]
@@ -118,7 +118,7 @@ class InfoFrame(tk.Frame):
             self.save_path = last_session
             self.set_ost(ost)
             self.app.update_title(ost.full_name())
-            self.status_bar.set("Session restored!")
+            self.status_bar.set("Session restored")
             return
         # using default
         self.set_ost(default)
@@ -226,13 +226,13 @@ class InfoFrame(tk.Frame):
                 subject="OST",
             )
         except Exception as e:
-            progress_dialog.log("✗ Error on generate! {}".format(str(e)))
+            progress_dialog.log("✗ Error on generate {}".format(str(e)))
             progress_dialog.end(error=True)
             return False
-        progress_dialog.tick("➜ PDF saved!")
+        progress_dialog.tick("➜ PDF saved")
         progress_dialog.end()
         progress_dialog.log("✔ PDF Saved to : {}".format(pdf_path))
-        self.status_bar.set("PDF saved to : {}!".format(pdf_path))
+        self.status_bar.set("PDF saved to : {}".format(pdf_path))
         # now we move on to print
         if open_file:
             self.open_file(pdf_path, progress_dialog)
@@ -258,9 +258,9 @@ class InfoFrame(tk.Frame):
     def open_file(pdf_path, progress_dialog):
         try:
             open_path(pdf_path)
-            progress_dialog.log("✔ File opened!")
+            progress_dialog.log("✔ File opened")
         except Exception as e:
-            progress_dialog.log("✗ Fail to open file! {}".format(str(e)))
+            progress_dialog.log("✗ Fail to open file {}".format(str(e)))
 
     def reset_action(self, ask=True):
         # pop up here
@@ -275,7 +275,7 @@ class InfoFrame(tk.Frame):
         if res:
             self.set_ost(DEFAULT_OST_INFO)
             self.app.update_title("NEW DRAFT")
-            self.status_bar.set("Reset Successful!")
+            self.status_bar.set("Reset Successful")
 
     def new_draft_action(self):
         # save the current draft
@@ -283,7 +283,7 @@ class InfoFrame(tk.Frame):
         # new all data
         self.reset_action(ask=False)
         self.save_path = None
-        self.status_bar.set("New draft created!")
+        self.status_bar.set("New draft created")
 
     def save_action(self, ost=None, ask=False):
         if ost is None:
@@ -302,8 +302,8 @@ class InfoFrame(tk.Frame):
         assert ost is not None, "OST shouldn't be None at this point"
         ost.to_json(self.save_path)
         self.app.update_title(ost.full_name())
-        self.logger.info("Draft saved on {}!".format(self.save_path))
-        self.status_bar.set("Draft saved on {}!".format(self.save_path))
+        self.logger.info("Draft saved on {}".format(self.save_path))
+        self.status_bar.set("Draft saved on {}".format(self.save_path))
         # train the CCCL
         self.course_panel.train()
 
@@ -341,7 +341,7 @@ class InfoFrame(tk.Frame):
         ost = Data.OST_info.from_json(path)
         self.set_ost(ost)
         self.app.update_title(ost.full_name())
-        self.status_bar.set("File opened!")
+        self.status_bar.set("File opened")
 
     def about_action(self):
         tk.messagebox.showinfo(
