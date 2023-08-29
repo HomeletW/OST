@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OST Helper 2"
-#define MyAppVersion "2.0"
+#define MyAppVersion "2.1"
 #define MyAppPublisher "Hongcheng Wei"
 #define MyAppURL "https://github.com/HomeletW/OST"
 #define MyAppExeName "OST Helper 2.exe"

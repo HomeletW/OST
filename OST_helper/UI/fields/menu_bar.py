@@ -9,14 +9,12 @@ class MenuBar(tk.Menu):
         super().__init__(master)
         self.file_menu = None
         self.setting = None
-        # self.template = None
         self.tools = None
         self.help = None
         self.info_panel = info_panel
         # setting
-        # self.template_options = tk.StringVar(value=SETTING.get("template", "V2013"))
-        self.draw_ost_template = tk.BooleanVar(
-            value=SETTING["draw_ost_template"])
+        self.draw_use_old_version_paper = tk.BooleanVar(value=SETTING.get("draw_use_old_version_paper", True))
+        self.draw_ost_template = tk.BooleanVar(value=SETTING["draw_ost_template"])
         self.smart_fill = tk.BooleanVar(value=SETTING["smart_fill"])
         self.train = tk.BooleanVar(value=SETTING["train"])
         self.add_items()
@@ -38,25 +36,23 @@ class MenuBar(tk.Menu):
         self.add_cascade(label="File", menu=self.file_menu)
 
         self.setting = tk.Menu(self, tearoff=0)
-        self.setting.add_checkbutton(label="Draw OST Template when output",
+        self.setting.add_checkbutton(label="Draw OST Template",
                                      variable=self.draw_ost_template,
                                      command=self.toggle_draw_ost_template)
+        self.setting.add_checkbutton(label="Draw Use Old Version Paper",
+                                     variable=self.draw_use_old_version_paper,
+                                     command=self.toggle_draw_use_old_version_paper)
         self.setting.add_separator()
         self.setting.add_command(label="Adjust...",
                                  command=self.info_panel.adjust_action)
         self.setting.add_separator()
-        self.setting.add_checkbutton(label="Autofill",
+        self.setting.add_checkbutton(label="Autocomplete",
                                      variable=self.smart_fill,
                                      command=self.toggle_smart_fill)
-        self.setting.add_checkbutton(label="Autofill Train",
+        self.setting.add_checkbutton(label="Autocomplete Train",
                                      variable=self.train,
                                      command=self.toggle_train)
         self.add_cascade(label="Setting", menu=self.setting)
-
-        # self.template = tk.Menu(self, tearoff=0)
-        # self.template.add_radiobutton(label="V2013", value="V2013", variable=self.template_options)
-        # self.template.add_radiobutton(label="V2022", value="V2022", variable=self.template_options)
-        # self.add_cascade(label="Template", menu=self.template)
 
         self.tools = tk.Menu(self, tearoff=0)
         self.tools.add_command(label="Production Tool",
@@ -71,15 +67,24 @@ class MenuBar(tk.Menu):
     def start_production(self):
         # first we display a dialog to ask user for some parm
         production_dialog = ProductionDialog(
-            self.master, self.info_panel, "", "", SETTING["draw_ost_template"]
+            self.master, self.info_panel, "", "", 
+            SETTING["draw_ost_template"],
+            SETTING["draw_use_old_version_paper"],
         )
         production_dialog.start()
+        
+    def toggle_draw_use_old_version_paper(self):
+        draw_use_old_version_paper = self.draw_use_old_version_paper.get()
+        SETTING["draw_use_old_version_paper"] = draw_use_old_version_paper
+        self.info_panel.status_bar.set(
+            "Draw use old version paper has been set to {}".format(
+                "ON" if draw_use_old_version_paper else "OFF"))
 
     def toggle_draw_ost_template(self):
         draw_ost_template = self.draw_ost_template.get()
         SETTING["draw_ost_template"] = draw_ost_template
         self.info_panel.status_bar.set(
-            "Draw ost Template has been set to {}".format(
+            "Draw ost template has been set to {}".format(
                 "ON" if draw_ost_template else "OFF"))
 
     def toggle_smart_fill(self):

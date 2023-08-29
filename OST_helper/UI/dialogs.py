@@ -24,6 +24,7 @@ class AutoValueWindow(tk.Toplevel):
         super().__init__(master=master, width=width, height=height)
         self.wm_title(f"Set {value_name}")
         self.wm_iconbitmap(APP_LOGO)
+        self.transient(master)
         self.course_panel = course_panel
         self.resizable(False, False)
         self.value_name = value_name
@@ -69,7 +70,16 @@ class AutoValueWindow(tk.Toplevel):
             [self.cancel_button, self.confirm_button],
         ])
         self.use_auto_var.set(self.use_auto)   # trigger trace
-
+        
+    def set(self, use_auto, override_text):
+        self.use_auto = use_auto
+        self.override_text = override_text
+        self.use_auto_var.set(use_auto)
+        self.override_entry.set(override_text)
+        
+    def get(self):
+        return self.use_auto, self.override_text
+        
     def sync_use_auto(self, *args):
         if self.use_auto_var.get():
             self.override_entry.disable()
@@ -91,6 +101,7 @@ class AutoValueWindow(tk.Toplevel):
         self.wm_geometry("+{}+{}".format(x, y))
         self.update()
         self.deiconify()
+        self.focus_set()
         self.grab_set()
         # self.wait_visibility()
 
@@ -115,7 +126,10 @@ class AutoValueWindow(tk.Toplevel):
         self.course_panel.master.status_bar.set(f"Set {self.value_name} canceled")
 
 class AdjustmentWindow(tk.Toplevel):
-    def __init__(self, master, info_frame, x_offset, y_offset, font_size,
+    def __init__(self, master, info_frame, 
+                 x_offset, 
+                 y_offset, 
+                 font_size,
                  spacing):
         width, height = COORDINATES["Size"]
         c_width, c_height = width // 4, height // 4
@@ -125,10 +139,11 @@ class AdjustmentWindow(tk.Toplevel):
         super().__init__(master=master, width=c_width, height=c_height + 250)
         self.wm_title("Adjustment")
         self.wm_iconbitmap(APP_LOGO)
+        self.transient(master)
         self.info_frame = info_frame
         self.resizable(False, False)
-        self.ost_sample = OST_SAMPLE_IMAGE
         self.canvas = None
+        self.draw_with_old_paper = True  # updated on each show
         self.x_offset = None
         self.y_offset = None
         self.font_size = None
@@ -238,7 +253,7 @@ class AdjustmentWindow(tk.Toplevel):
         self.wm_withdraw()
         self.grab_release()
 
-    def show(self, ost):
+    def show(self, ost, draw_with_old_paper):
         p_x = self.info_frame.tk_frame.winfo_rootx()
         p_y = self.info_frame.tk_frame.winfo_rooty()
         p_height = self.info_frame.tk_frame.winfo_height()
@@ -248,6 +263,7 @@ class AdjustmentWindow(tk.Toplevel):
         x, y = p_center_x - width // 2, p_center_y - height // 2
         self.wm_geometry("+{}+{}".format(x, y))
         self.ost = ost
+        self.draw_with_old_paper = draw_with_old_paper
         self.update()
         self.deiconify()
         self.grab_set()
@@ -277,13 +293,14 @@ class AdjustmentWindow(tk.Toplevel):
         font_size, spacing = self.font_size.get(), self.spacing.get()
         self.ost.set_font_size(font_size)
         self.ost.set_spacing(spacing)
-        img, _ = Drawer.draw(self.ost, False, offset=(x_off, y_off))
+        img, _ = Drawer.draw(self.ost, 
+                             draw_ost_template=True, 
+                             draw_with_old_paper=self.draw_with_old_paper,
+                             offset=(x_off, y_off))
         img = img[0][0]
-        image = self.ost_sample.copy()
-        image.paste(img, (0, 0), img)
         c_width, c_height = self.canvas_size
         self.image = ImageTk.PhotoImage(
-            image=image.resize((c_width, c_height), Image.ANTIALIAS))
+            image=img.resize((c_width, c_height), Image.Resampling.LANCZOS))
         self.canvas.delete("all")
         # self.canvas.create_rectangle((0, 0, 3300 // 5, 2550 // 5), fill="white")
         self.canvas.create_image(0, 0, anchor="nw", image=self.image)
@@ -451,8 +468,12 @@ class ProductionDialog(tk.Toplevel):
     -> does draw ost template
     """
 
-    def __init__(self, master, info_frame, json_value, output_value,
-                 draw_ost_template):
+    def __init__(self, master, 
+                 info_frame, 
+                 json_value, 
+                 output_value,
+                 draw_ost_template,
+                 draw_use_old_version_paper):
         width, height = 600, 300
         self.size_config = TopDownSizeConfig(width, height)
         super().__init__(master=master, width=width, height=height)
@@ -473,16 +494,18 @@ class ProductionDialog(tk.Toplevel):
         self.choose_output_label = None
         self.draw_template_var = None
         self.draw_ost_template_check = None
+        self.draw_use_old_version_paper_var = None
+        self.draw_use_old_version_paper_check = None
         self.overwrite_output_var = None
         self.overwrite_output = None
         self.cancel_button = None
         self.start_button = None
-        self.add_items(width, height, draw_ost_template)
+        self.add_items(width, height, draw_ost_template, draw_use_old_version_paper)
         self.grab_set()
         self.initial_focus = self.main_frame
         self.protocol("WM_DELETE_WINDOW", self.cancel)
 
-    def cancel(self):
+    def cancel(self): 
         self.master.focus_set()
         self.destroy()
 
@@ -506,6 +529,7 @@ class ProductionDialog(tk.Toplevel):
         json_dir = self.json_value
         output_dir = self.output_value
         draw_template = self.draw_template_var.get()
+        draw_use_old_version_paper = self.draw_use_old_version_paper_var.get()
         overwrite_output = self.overwrite_output_var.get()
         if not json_dir or not output_dir:
             tk.messagebox.showerror(
@@ -520,12 +544,17 @@ class ProductionDialog(tk.Toplevel):
             self, "Production", self.info_frame, self._production,
             json_dir=json_dir, output_dir=output_dir,
             draw_template=draw_template,
+            draw_use_old_version_paper=draw_use_old_version_paper,
             overwrite_output=overwrite_output,
         )
         tmd.start()
 
-    def _production(self, progress_dialog: Tracker, json_dir, output_dir,
-                    draw_template, overwrite_output):
+    def _production(self, progress_dialog: Tracker, 
+                    json_dir, 
+                    output_dir,
+                    draw_template, 
+                    draw_use_old_version_paper, 
+                    overwrite_output):
         jsons = listdir(json_dir)
         progress_dialog.init(len(jsons))
         for j in jsons:
@@ -539,6 +568,7 @@ class ProductionDialog(tk.Toplevel):
                     json_path,
                     output_dir,
                     draw_template,
+                    draw_use_old_version_paper,
                     overwrite_output
                 )
                 if ret in [PRODUCTION_FILE_NOT_RECOGNIZED]:
@@ -608,14 +638,14 @@ class ProductionDialog(tk.Toplevel):
         else:
             self.choose_output_button.config(fg="red")
 
-    def add_items(self, width, height, draw_ost_template):
+    def add_items(self, width, height, draw_ost_template, draw_use_old_version_paper):
         self.main_frame = tk.Frame(self)
         self.main_frame.place(x=0, y=0, width=width, height=height)
         self.size_config.divide([
             [4, 1],
             [1, 1, 2],
             [1, 1, 2],
-            [1, 1, 1],
+            [1, 1, 1, 1],
             [1, 1, 2],
         ], internal=False)
         self.description_label = tk.Label(
@@ -646,17 +676,26 @@ class ProductionDialog(tk.Toplevel):
             command=self.ask_output_dir, anchor=tk.W)
         self.choose_output_label = tk.Label(
             self.main_frame, textvariable=self.output_var, anchor=tk.W)
+        # draw template
         self.draw_template_var = tk.BooleanVar()
         self.draw_template_var.set(draw_ost_template)
         self.draw_ost_template_check = tk.Checkbutton(
-            master=self.main_frame, text="Draw OST Template when output",
+            master=self.main_frame, text="Draw OST Template",
             onvalue=True, offvalue=False, variable=self.draw_template_var,
             anchor=tk.W)
+        # draw old paper
+        self.draw_use_old_version_paper_var = tk.BooleanVar()
+        self.draw_use_old_version_paper_var.set(draw_use_old_version_paper)
+        self.draw_use_old_version_paper_check = tk.Checkbutton(
+            master=self.main_frame, text="Old Version Paper",
+            onvalue=True, offvalue=False, variable=self.draw_use_old_version_paper_var,
+            anchor=tk.W)
+        # override output
         self.overwrite_output_var = tk.BooleanVar()
         self.overwrite_output_var.set(False)
         self.overwrite_output = tk.Checkbutton(
             master=self.main_frame,
-            text="Overwrite Output files when necessary",
+            text="Overwrite Outputs",
             onvalue=True, offvalue=False, variable=self.overwrite_output_var,
             anchor=tk.W)
         self.start_button = tk.Button(
@@ -669,7 +708,7 @@ class ProductionDialog(tk.Toplevel):
             [self.description_label],
             [self.choose_json_button, self.choose_json_label],
             [self.choose_output_button, self.choose_output_label],
-            [self.draw_ost_template_check, self.overwrite_output],
+            [self.draw_ost_template_check, self.draw_use_old_version_paper_check, self.overwrite_output],
             [self.cancel_button, self.start_button],
         ])
         self.sync_fg()

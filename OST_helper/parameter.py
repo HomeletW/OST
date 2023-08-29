@@ -1,4 +1,3 @@
-# constant
 import json
 import logging
 import os
@@ -11,25 +10,28 @@ from PIL import Image
 
 logging.basicConfig(
     style="{",
-    format="{threadName:<10s} <{levelname:<7s}> [{asctime:<15s}] {message}",
+    format="{threadName:<10s} <{levelname}> [{asctime:<15s}] {message}",
     level=logging.INFO
 )
-
 
 # paths
 CCCL_PATH = None
 SETTING_PATH = None
 APP_LOGO = None
 OST_SAMPLE = None
+OST_SAMPLE_2023 = None
+OST_CHECKMARK = None
 DEFAULT_OST_PATH = None
 TFONT = None
-DEFAULT_COORDINATES_PATH = None
+COORDINATES_PATH = None
 
 # os
 DEVICE_OS = platform.system()
 
 # ost sample
 OST_SAMPLE_IMAGE = None
+OST_SAMPLE_2023_IMAGE = None
+OST_CHECKMARK_IMAGE = None
 
 # today
 today = None
@@ -90,17 +92,18 @@ def open_path(abs_path):
 DEFAULT_DIR = get_desktop_directory()
 
 # "course_code": ["course_title", "course_level", "credit", "compulsory"]
-default_common_course_code_library = {
+default_common_course_code_library = {}
 
-}
 default_setting = {
     "draw_ost_template": True,
+    "draw_use_old_version_paper": True,
     "smart_fill": True,
     "train": True,
     "json_dir": DEFAULT_DIR,
     "img_dir": DEFAULT_DIR,
     "last_session": None,
 }
+
 default_ost = {
     "OST_date_of_issue": today,
     "name": ["", ""],
@@ -128,6 +131,7 @@ default_ost = {
     "credit_summary_override": "",
     "compulsory_summary_override": ""
 }
+
 default_coordinates = {
     "Size": (3300, 2532),
     "Offset": (0, 0),
@@ -163,16 +167,42 @@ default_coordinates = {
     "Course_note_offset": (2965 - 35, 299),
     "SummaryOfCredit": (2562, 1992, 184, 69, 55),
     "SummaryOfCompulsory": (2748, 1992, 207, 69, 55),
+    
+    # old version
     "CommunityInvolvement_True": (75, 2125),
     "CommunityInvolvement_False": (385, 2125),
     "ProvincialSecondarySchoolLiteracy_True": (623, 2125),
     "ProvincialSecondarySchoolLiteracy_False": (1173, 2125),
+    
+    # new version
+    "CommunityInvolvement_True_2023": (75, 2125),
+    "CommunityInvolvement_False_2023": (369, 2125),
+    "ProvincialSecondarySchoolLiteracy_True_2023": (545, 2125),
+    "ProvincialSecondarySchoolLiteracy_False_2023": (1015, 2125),
+    "SecondarySchoolOnlineLearningRequirements_True_2023": (1273, 2125),
+    "SecondarySchoolOnlineLearningRequirements_False_2023": (1743, 2125),
+    
+    # new version on old version paper
+    "CommunityInvolvement_True_2023_oldversionpaper": (75, 2125),
+    "CommunityInvolvement_False_2023_oldversionpaper": (385, 2125),
+    "ProvincialSecondarySchoolLiteracy_True_2023_oldversionpaper": (623, 2125),
+    "ProvincialSecondarySchoolLiteracy_False_2023_oldversionpaper": (1173, 2125),
+    "SecondarySchoolOnlineLearningRequirements_True_2023_oldversionpaper": (2260, 2125),
+    "SecondarySchoolOnlineLearningRequirements_False_2023_oldversionpaper": (2795, 2125),
+    "SecondarySchoolOnlineLearningRequirements_Divider_2023_oldversionpaper": (2230, 2069, 2230, 2204, 3),  # x1, y1, x2, y2, line_width
+    "SecondarySchoolOnlineLearningRequirements_Title_2023_oldversionpaper": (2250, 2069, 1014, 40, 30),  # x, y, width, height, font_size
+    "SecondarySchoolOnlineLearningRequirements_TrueBox_2023_oldversionpaper": (2260, 2125, 63, 63, 2),  # x, y, width, height, box_line_width
+    "SecondarySchoolOnlineLearningRequirements_FalseBox_2023_oldversionpaper": (2795, 2125, 63, 63, 2),
+    "SecondarySchoolOnlineLearningRequirements_TrueText_2023_oldversionpaper": (2335, 2125, 450, 63, 35),  # x, y, width, height, font_size
+    "SecondarySchoolOnlineLearningRequirements_FalseText_2023_oldversionpaper": (2870, 2125, 395, 63, 35),
+    
     "SpecializedProgram": (1436, 2104, 1828, 96, 40),
     "DiplomaOrCertificate": (77, 2240, 1622, 90, 40),
     "DiplomaOrCertificate_DateOfIssue_Y": (1702, 2273, 180, 57, 40),
     "DiplomaOrCertificate_DateOfIssue_M": (1885, 2273, 180, 57, 40),
     "Authorization": (2070, 2240, 1148, 90, 40),
 }
+
 
 COMMON_COURSE_CODE_LIBRARY = None
 SETTING = None
@@ -182,15 +212,17 @@ COORDINATES = None
 
 def finalize():
     logger = logging.getLogger()
+    
     # save CCCL
     to_json(CCCL_PATH, COMMON_COURSE_CODE_LIBRARY)
-    logger.info("Common Course Code Library saved!")
+    logger.info("Course Code Library saved")
+
     # save setting
     to_json(SETTING_PATH, SETTING)
-    logger.info("Setting saved!")
+    logger.info("Setting saved")
 
 
-def initialize(resource_path):
+def initialize(resource_path, shared_data_path):
     global COMMON_COURSE_CODE_LIBRARY
     global SETTING
     global DEFAULT_OST_INFO
@@ -200,30 +232,53 @@ def initialize(resource_path):
     global SETTING_PATH
     global APP_LOGO
     global OST_SAMPLE
+    global OST_SAMPLE_2023
+    global OST_CHECKMARK
     global DEFAULT_OST_PATH
     global TFONT
-    global DEFAULT_COORDINATES_PATH
+    global COORDINATES_PATH
 
     global OST_SAMPLE_IMAGE
-
-    CCCL_PATH = join(resource_path, "CCCL.json")
-    SETTING_PATH = join(resource_path, "setting.json")
-    APP_LOGO = join(resource_path, "logo.ico")
-    OST_SAMPLE = join(resource_path, "ost_sample.png")
-    DEFAULT_OST_PATH = join(resource_path, "default_ost.json")
-    TFONT = join(resource_path, "font.ttf")
-    DEFAULT_COORDINATES_PATH = join(resource_path, "default_coordinates.json")
-
-    OST_SAMPLE_IMAGE = Image.open(OST_SAMPLE)
+    global OST_SAMPLE_2023_IMAGE        
+    global OST_CHECKMARK_IMAGE
 
     logger = logging.getLogger()
+    logger.info(f"Using resource path : {resource_path}")
+    logger.info(f"Using shared data path : {shared_data_path}")
+
+    # load resources
+    APP_LOGO = join(resource_path, "logo.ico")
+    OST_SAMPLE = join(resource_path, "ost_sample.png")
+    OST_SAMPLE_2023 = join(resource_path, "ost_sample_2023.png")
+    OST_CHECKMARK = join(resource_path, "checkmark.png")
+    TFONT = join(resource_path, "font.ttf")
+
+    # settings, coordinates, ost and CCCL are in shared data
+    # these settings must be backwards compatible
+    DEFAULT_OST_PATH = join(shared_data_path, "default_ost.json")
+    COORDINATES_PATH = join(shared_data_path, "coordinates.json")
+    CCCL_PATH = join(shared_data_path, "common_courses.json")
+    SETTING_PATH = join(shared_data_path, "setting.json")
+
+    # load images
+    try:
+        OST_SAMPLE_IMAGE = Image.open(OST_SAMPLE)
+        OST_SAMPLE_2023_IMAGE = Image.open(OST_SAMPLE_2023)
+        OST_CHECKMARK_IMAGE = Image.open(OST_CHECKMARK)
+        logger.info("Loaded OST image and checkmark image")
+    except Exception:
+        logger.error("Missing OST image and checkmark image in resource folder, exitting")
+        exit(1)
+    
     # initialize CCCL
     try:
         COMMON_COURSE_CODE_LIBRARY = from_json(CCCL_PATH)
-        logger.info(f"Loaded CCCL [{len(COMMON_COURSE_CODE_LIBRARY)} courses]!")
+        logger.info(f"Loaded {len(COMMON_COURSE_CODE_LIBRARY)} common course code")
     except Exception:
         COMMON_COURSE_CODE_LIBRARY = default_common_course_code_library
-        logger.warning("No CCCL found, restoring from default...")
+        to_json(CCCL_PATH, COMMON_COURSE_CODE_LIBRARY)
+        logger.warning("No common course code found, creating default...")
+        
     # initialize settings
     try:
         SETTING = from_json(SETTING_PATH)
@@ -233,28 +288,31 @@ def initialize(resource_path):
         if not isdir(SETTING["img_dir"]):
             SETTING["img_dir"] = DEFAULT_DIR
             logger.warning("image dir no longer is dir, resetting to default")
-        if SETTING["last_session"] is not None and not isfile(
-                SETTING["last_session"]):
+        if SETTING["last_session"] is not None and not isfile(SETTING["last_session"]):
             SETTING["last_session"] = None
-            logger.warning(
-                "last session ost file no longer exist, resetting to default")
-        logger.info("Loaded setting!")
+            logger.warning("last session ost file no longer exist, resetting to default")
+        logger.info("Loaded setting")
     except Exception:
         SETTING = default_setting
-        logger.info("No setting found, restoring from default...")
+        to_json(SETTING_PATH, SETTING)
+        logger.info("No setting found, creating default...")
+        
     # initialize OST
     from OST_helper.data_handler.Data import OST_info
     try:
         DEFAULT_OST_INFO = OST_info.from_json(DEFAULT_OST_PATH)
         DEFAULT_OST_INFO.update_date_of_issue(today)
-        logger.info("Loaded ost!")
+        logger.info("Loaded ost template")
     except Exception:
         DEFAULT_OST_INFO = OST_info.from_data(default_ost)
-        logger.warning("No default OST info found, using default...")
+        OST_info.to_json(DEFAULT_OST_INFO, DEFAULT_OST_PATH)
+        logger.warning("No OST template found, creating default...")
+
     # initialize coordinate
     try:
-        COORDINATES = from_json(DEFAULT_COORDINATES_PATH)
-        logger.info("Loaded coordinates!")
+        COORDINATES = from_json(COORDINATES_PATH)
+        logger.info("Loaded coordinates")
     except Exception:
         COORDINATES = default_coordinates
-        logger.warning("No default coordinates found, using default...")
+        to_json(COORDINATES_PATH, COORDINATES)
+        logger.warning("No coordinates found, creating default...")

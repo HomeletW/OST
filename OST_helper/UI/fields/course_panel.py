@@ -30,6 +30,8 @@ class CoursePanel(tk.Frame):
         self.note_label = None
         self.scrollBar = None
         self.sort = None
+        self.credit_summary_var = None
+        self.compulsory_summary_var = None
         self.credit_summary = None
         self.compulsory_summary = None
         self.set_credit_summary = None
@@ -153,24 +155,26 @@ class CoursePanel(tk.Frame):
         return True
 
     def sync_credit(self):
-        if not self.set_credit_summary.use_auto:
-            self.credit_summary.config(text=self.set_credit_summary.override_text)
+        use_auto, override_text = self.set_credit_summary.get()
+        if not use_auto:
+            self.credit_summary_var.set(override_text)
         else:
             value = sum([c.calculate_credit() for c in self.courses])
             # if not isinstance(value, int) and value.is_integer():
             #     value = int(value)
-            self.credit_summary.config(text=str(value))
+            self.credit_summary_var.set(str(value))
         return True
 
     def set_credit_action(self, *args):
         self.set_credit_summary.show()
 
     def sync_compulsory(self):
-        if not self.set_compulsory_summary.use_auto:
-            self.compulsory_summary.config(text=self.set_compulsory_summary.override_text)
+        use_auto, override_text = self.set_compulsory_summary.get()
+        if not use_auto:
+            self.compulsory_summary_var.set(override_text)
         else:
             value = sum([c.calculate_compulsory() for c in self.courses])
-            self.compulsory_summary.config(text=str(value))
+            self.compulsory_summary_var.set(str(value))
         return True
 
     def set_compulsory_action(self, *args):
@@ -254,8 +258,10 @@ class CoursePanel(tk.Frame):
         self.sort = tk.Button(self, text="Sort", command=self.sort_course)
         self.set_credit_summary = AutoValueWindow(self.master, self, "Credit Summary", "", True, on_set=self.sync_credit)
         self.set_compulsory_summary = AutoValueWindow(self.master, self, "Compulsory Summary", "", True, on_set=self.sync_compulsory)
-        self.credit_summary = tk.Button(self, text="0", anchor=tk.N, command=self.set_credit_action)
-        self.compulsory_summary = tk.Button(self, text="0", anchor=tk.N, command=self.set_compulsory_action)
+        self.credit_summary_var = tk.StringVar(value="0")
+        self.credit_summary = tk.Button(self, textvariable=self.credit_summary_var, anchor=tk.N, command=self.set_credit_action)
+        self.compulsory_summary_var = tk.StringVar(value="0")
+        self.compulsory_summary = tk.Button(self, textvariable=self.compulsory_summary_var, anchor=tk.N, command=self.set_compulsory_action)
         self.symbol_label = tk.Label(self, text="SUMMARY OF CREDITS \u2192",
                                      anchor=tk.NE, justify=tk.LEFT)
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
@@ -298,19 +304,19 @@ class CoursePanel(tk.Frame):
         self.sync_canvas_loc(0)
         self.count_courses()
         # credit summary and compulsory summary
-        self.set_credit_summary.use_auto = data["auto_credit_summary"]
-        self.set_compulsory_summary.use_auto = data["auto_compulsory_summary"]
-        self.set_credit_summary.override_text = data["credit_summary_override"]
-        self.set_compulsory_summary.override_text = data["compulsory_summary_override"]
+        self.set_credit_summary.set(
+            use_auto=data["auto_credit_summary"], 
+            override_text=data["credit_summary_override"])
+        self.set_compulsory_summary.set(
+            use_auto=data["auto_compulsory_summary"], 
+            override_text=data["compulsory_summary_override"])
         self.sync_compulsory()
         self.sync_credit()
 
     def get(self, data):
         data["course_list"] = [c.get() for c in self.courses]
-        data["auto_credit_summary"] = self.set_credit_summary.use_auto
-        data["auto_compulsory_summary"] = self.set_compulsory_summary.use_auto
-        data["credit_summary_override"] = self.set_credit_summary.override_text
-        data["compulsory_summary_override"] = self.set_compulsory_summary.override_text
+        data["auto_credit_summary"], data["credit_summary_override"] = self.set_credit_summary.get()
+        data["auto_compulsory_summary"], data["compulsory_summary_override"] = self.set_compulsory_summary.get()
 
 
 class CoursePair(tk.Frame):
