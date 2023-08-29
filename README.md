@@ -12,16 +12,22 @@ OST Helper is a program that helps to create and modify the Ontario Student Tran
 
 ### Features
 - OST Helper saves OST as an [json file](https://en.wikipedia.org/wiki/JSON), which makes storing and transporting OST easier.
-- Users can choose to export the OST to PDF either with a template in the background, or without a template in the background (for print).
+- Users can choose to export the OST to PDF with an OST template in the background, or to a transparent background for printing.
 - The Autocomplete feature helps quickly add Course to the OST, check out [Autocomplete](#Autocomplete).
-- The Preview feature allows you to change the font size and spacing of the OST to suit your need. Check out [Adjustment](#adjusting-the-ost-layout).
-- Production Tool helps to create OST in batches, more detail in production tools, check out [Production Tool](#using-production-tool).
+- The Preview feature allows you to change the font size and spacing of the OST for your printing need. Check out [Adjustment](#adjusting-the-ost-layout).
+- Production Tool helps to handle OST in batches, more detail in production tools, check out [Production Tool](#using-production-tool).
+
+### Update to New OST Template
+
+_Version 2.0_ of OST Helper updated to the new OST paper with a new "Online Learning requirements" field.
+
+_Version 2.1_ added feature to print the new information using the old OST paper, it manually prints out the Online Learning Requirments box. Turn on `Draw Use Old Version Paper` in the `Setting` menu. when working with old version paper.
 
 ## Get Started
 
 First, [Install OST Helper](#install-ost-helper), after the program is correctly installed, run the program, and you will be greeted with the main screen:
 
-![Main Screen](asset/main_screen.png)
+![Main Screen](readme_asset/main_screen.png)
 
 The layout of the OST Helper should be familiar. Every field corresponds with a field in OST. However, there are still some adjustments made:
 
@@ -38,7 +44,7 @@ The layout of the OST Helper should be familiar. Every field corresponds with a 
 
 To add a course, press `+ ADD Course` button, and a course will appear at the end of the list.
 
-![add course example](asset/add_course_example.png)
+![add course example](readme_asset/add_course_example.png)
 
 There are a handful of tips and tricks about adding Courses that can help speed up the process.
 - Up arrow, Down arrow, Left arrow, Right arrow moves the focus in their expected direction.
@@ -54,15 +60,15 @@ Now it is ready to generate the OST to PDF, but you might want to preview what t
 
 After inspected the OST and made the Adjustment, press the `Generate!` button, choose your output directory, and leave the rest to OST Helper.
 
-![Generate Success](asset/generate_success.png)
+![Generate Success](readme_asset/generate_success.png)
 
 Note that there are two options in OST Helper in generating OST:
 - With OST Template, suitable for direct use and back up.
 - Without OST Template, suitable for printing on official OST paper.
 
-Toggle output with or without the template, toggle `Draw OST Template when output` in the `Setting` menu.
+Toggle output with or without the template, toggle `Draw OST Template` in the `Setting` menu.
 
-![Draw Compare](asset/draw_compare.png)
+![Draw Compare](readme_asset/draw_compare.png)
 
 Other things to note of:
 1. The default name of the OST file and the generated file is in the following format:
@@ -73,22 +79,17 @@ Other things to note of:
 1. The Autocomplete feature can be turned off, toggle Autocomplete menu.
 
 ## Autocomplete
-Autocomplete helps users to add courses quickly. As the user spends more time with OST Helper, autocomplete becomes more and more helpful.
-
-_Note that Autocomplete feature can be turned off, toggle `Autocomplete` in the `Setting` menu._
+Autocomplete helps users to add courses quickly. As the user spends more time with OST Helper, autocomplete becomes more and more powerful.
 
 To use Autocomplete, start typing a Course Code in `Course Code` field and then press Enter Key to triggers Autocomplete.
 
-When Autocomplete is triggered, the program will look for the Course Code you just typed in the CCCL (Common Course Code Libary), if a reference is found, it will fill `Level`, `Title`, `Credit`, `Comp.` for you.
+When Autocomplete is triggered, OST Helper look for the course code you just typed in the common courses library. If a reference is found, the rest of the information are filled in automatically.
 
-![Smart Fill Demo](asset/smart_fill_demo.gif)
+![Smart Fill Demo](readme_asset/smart_fill_demo.gif)
 
-### Common Cource Code Library (CCCL)
-When you save an OST json, OST Helper will remember the courses that were entered and save it in CCCL.
+_Autocomplete feature can be turned off, toggle `Autocomplete` in the `Setting` menu._
 
-CCCL (Common Course Code Library) only saves the _valid_ Course that you inputted. A _valid_ course must have `Course Code` and `Level` and `Title` and `Credit`, that means the corresponding field must not empty at the time a training cycle performs.
-
-CCCL is saved to `resource/CCCL.json`.
+The common course codes are saved to `shared_data/common_courses.json`.
 
 ## Adjusting the OST Layout
 The preview Window provides several functionalities to fine-tune the layout of the OST. 
@@ -101,14 +102,14 @@ The preview Window provides several functionalities to fine-tune the layout of t
 - A slider that change the `Spacing` of the courses.
     - This slider changes the space between each line (this slider goes as low as -10). Any value below 0 means there will be some overlap on the text; this should be the second option when you want to squeeze more lines in one page.
 
-![Adjustment Screen](asset/adjustment_screen.png)
+![Adjustment Screen](readme_asset/adjustment_screen.png)
 
 ## Using Production Tool
 The Production tool helps generate OST to PDF in batches. 
 
 First, put all OST file you want to process in a Directory (referred to as `Production Directory`), and then create another directory for output (referred to as `Output Location`). Then you can open the Production Tool by clicking the `Production Tool` in the `Tools` menu. Choose the Production Directory and Output Location then press `Start Production` to start production.
 
-![Production Tool Screen](asset/production_tool.png)
+![Production Tool Screen](readme_asset/production_tool.png)
 
 > Every file in the Production Directory will be processed to generate an OST report (if possible) and saved to the Output Location with the default file name. If the file name already exists in Output Location, it won't be overwritten unless _Overwrite when necessary_ is checked.
 
