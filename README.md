@@ -1,9 +1,9 @@
 # OST Helper
-Made for McCanny Secondary School, Dev by HongCheng Wei ([homeletwei@gmail.com](mailto::homeletwei@gmail.com)).
+Made for McCanny Secondary School, developed by HongCheng Wei ([homeletwei@gmail.com](mailto::homeletwei@gmail.com)).
 
 ## Install OST Helper
 
-OST Helper offically supports Windows Platform installer. Mac platform can run OST Helper through ternimal (installing packages in requirments.txt through pip and running the Launcher.py script with python3.X).
+OST Helper officially supports Windows Platform installer. Mac platform can run OST Helper through terminal (installing packages in `requirements.txt` through pip and running the `Launcher.py` script with python3.X).
 
 To install OST Helper, download the latest installer from [here](https://github.com/HomeletW/OST/releases/latest), double click to run the OST Helper installer. The installer will prompt you where to install. After the installation is complete, open the folder that the program is installed in and double click `OST Helper.exe` to run OST Helper. There might be a short delay after you double click to run the program, this is normal.
 
@@ -21,7 +21,7 @@ OST Helper is a program that helps to create and modify the Ontario Student Tran
 
 _Version 2.0_ of OST Helper updated to the new OST paper with a new "Online Learning requirements" field.
 
-_Version 2.1_ added feature to print the new information using the old OST paper, it manually prints out the Online Learning Requirments box. Turn on `Draw Use Old Version Paper` in the `Setting` menu. when working with old version paper.
+_Version 2.1_ added feature to print the new information using the old OST paper, it manually prints out the Online Learning Requirements box. Turn on `Draw Use Old Version Paper` in the `Setting` menu. when working with old version paper.
 
 ## Get Started
 
