@@ -23,7 +23,7 @@ OST_SAMPLE_2023 = None
 OST_CHECKMARK = None
 DEFAULT_OST_PATH = None
 TFONT = None
-DEFAULT_COORDINATES_PATH = None
+COORDINATES_PATH = None
 
 # os
 DEVICE_OS = platform.system()
@@ -222,7 +222,7 @@ def finalize():
     logger.info("Setting saved")
 
 
-def initialize(resource_path, shared_resource_path):
+def initialize(resource_path, shared_data_path):
     global COMMON_COURSE_CODE_LIBRARY
     global SETTING
     global DEFAULT_OST_INFO
@@ -236,35 +236,36 @@ def initialize(resource_path, shared_resource_path):
     global OST_CHECKMARK
     global DEFAULT_OST_PATH
     global TFONT
-    global DEFAULT_COORDINATES_PATH
+    global COORDINATES_PATH
 
     global OST_SAMPLE_IMAGE
     global OST_SAMPLE_2023_IMAGE        
     global OST_CHECKMARK_IMAGE
 
-    # the other are version specific
-    SETTING_PATH = join(resource_path, "setting.json")
+    logger = logging.getLogger()
+    logger.info(f"Using resource path : {resource_path}")
+    logger.info(f"Using shared data path : {shared_data_path}")
+
+    # load resources
     APP_LOGO = join(resource_path, "logo.ico")
     OST_SAMPLE = join(resource_path, "ost_sample.png")
     OST_SAMPLE_2023 = join(resource_path, "ost_sample_2023.png")
     OST_CHECKMARK = join(resource_path, "checkmark.png")
-    DEFAULT_OST_PATH = join(resource_path, "default_ost.json")
     TFONT = join(resource_path, "font.ttf")
-    DEFAULT_COORDINATES_PATH = join(resource_path, "default_coordinates.json")
-    
-    # CCCL is shared
-    CCCL_PATH = join(shared_resource_path, "CCCL.json")
 
-    logger = logging.getLogger()
-    logger.info(f"Using resource path : {resource_path}")
-    logger.info(f"Using shared resource path : {shared_resource_path}")
+    # settings, coordinates, ost and CCCL are in shared data
+    # these settings must be backwards compatible
+    DEFAULT_OST_PATH = join(shared_data_path, "default_ost.json")
+    COORDINATES_PATH = join(shared_data_path, "coordinates.json")
+    CCCL_PATH = join(shared_data_path, "common_courses.json")
+    SETTING_PATH = join(shared_data_path, "setting.json")
 
     # load images
     try:
         OST_SAMPLE_IMAGE = Image.open(OST_SAMPLE)
         OST_SAMPLE_2023_IMAGE = Image.open(OST_SAMPLE_2023)
         OST_CHECKMARK_IMAGE = Image.open(OST_CHECKMARK)
-        logger.info(f"Loaded OST image and checkmark image")
+        logger.info("Loaded OST image and checkmark image")
     except Exception:
         logger.error("Missing OST image and checkmark image in resource folder, exitting")
         exit(1)
@@ -275,7 +276,8 @@ def initialize(resource_path, shared_resource_path):
         logger.info(f"Loaded {len(COMMON_COURSE_CODE_LIBRARY)} common course code")
     except Exception:
         COMMON_COURSE_CODE_LIBRARY = default_common_course_code_library
-        logger.warning("No common course code found, using default...")
+        to_json(CCCL_PATH, COMMON_COURSE_CODE_LIBRARY)
+        logger.warning("No common course code found, creating default...")
         
     # initialize settings
     try:
@@ -292,7 +294,8 @@ def initialize(resource_path, shared_resource_path):
         logger.info("Loaded setting")
     except Exception:
         SETTING = default_setting
-        logger.info("No setting found, using default...")
+        to_json(SETTING_PATH, SETTING)
+        logger.info("No setting found, creating default...")
         
     # initialize OST
     from OST_helper.data_handler.Data import OST_info
@@ -302,12 +305,14 @@ def initialize(resource_path, shared_resource_path):
         logger.info("Loaded ost template")
     except Exception:
         DEFAULT_OST_INFO = OST_info.from_data(default_ost)
-        logger.warning("No OST template found, using default...")
-        
+        OST_info.to_json(DEFAULT_OST_INFO, DEFAULT_OST_PATH)
+        logger.warning("No OST template found, creating default...")
+
     # initialize coordinate
     try:
-        COORDINATES = from_json(DEFAULT_COORDINATES_PATH)
+        COORDINATES = from_json(COORDINATES_PATH)
         logger.info("Loaded coordinates")
     except Exception:
         COORDINATES = default_coordinates
-        logger.warning("No coordinates found, using default...")
+        to_json(COORDINATES_PATH, COORDINATES)
+        logger.warning("No coordinates found, creating default...")
